@@ -2,6 +2,10 @@ package com.github.xiaolyuh.action;
 
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 /**
  * 提测
@@ -9,6 +13,10 @@ import com.intellij.openapi.project.Project;
  * @author yuhao.wang3
  */
 public class StartTestAction extends AbstractMergeAction {
+
+    public StartTestAction() {
+        super("提测", "将当前开发分支合并到test分支", IconLoader.getIcon("/icons/mergeToTest.svg"));
+    }
 
     @Override
     protected String getTargetBranch(Project project) {

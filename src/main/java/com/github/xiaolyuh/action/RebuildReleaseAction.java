@@ -9,11 +9,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * 新建发布分支
+ * 重建发布分支
  *
  * @author yuhao.wang3
  */
-public class NewReleaseAction extends AbstractNewBranchAction {
+public class RebuildReleaseAction extends AbstractNewBranchAction {
+    public RebuildReleaseAction() {
+        super("重建发布分支", "重建发布分支，并推送到远程仓库，原来的分支将被删除",
+                IconLoader.getIcon("/icons/release.svg"));
+    }
+
     @Override
     public void update(@NotNull AnActionEvent event) {
         super.update(event);

@@ -4,6 +4,7 @@ import com.github.xiaolyuh.ui.TagDialog;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,6 +13,11 @@ import org.jetbrains.annotations.NotNull;
  * @author yuhao.wang3
  */
 public class FinishReleaseAction extends AbstractMergeAction {
+
+    public FinishReleaseAction() {
+        super("发布完成", "解锁，并将发布分支合并到主干分支",
+                IconLoader.getIcon("/icons/finished.svg"));
+    }
 
     @Override
     public void update(@NotNull AnActionEvent event) {

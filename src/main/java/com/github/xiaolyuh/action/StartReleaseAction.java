@@ -2,6 +2,7 @@ package com.github.xiaolyuh.action;
 
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
 
 /**
  * 开始发布
@@ -9,6 +10,11 @@ import com.intellij.openapi.project.Project;
  * @author yuhao.wang3
  */
 public class StartReleaseAction extends AbstractMergeAction {
+
+    public StartReleaseAction() {
+        super("开始发布", "将当前开发分支合并到发布分支，加锁，防止再有开发分支合并到发布分支",
+                IconLoader.getIcon("/icons/start.svg"));
+    }
 
     @Override
     protected String getTargetBranch(Project project) {

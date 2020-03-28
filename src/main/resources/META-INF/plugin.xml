@@ -24,6 +24,12 @@
                             serviceImplementation="com.github.xiaolyuh.MrtfGitFlowImpl"/>
     </extensions>
 
+    <project-components>
+        <component>
+            <implementation-class>com.github.xiaolyuh.MrtfGitFlowComponent</implementation-class>
+        </component>
+    </project-components>
+
     <actions>
         <!-- Add your actions here -->
         <group id="MrtfGitFlow.Menu" text="MrtfGitFlow" description="GIT分支管理" icon="/icons/icon.svg"
@@ -31,32 +37,39 @@
 
             <add-to-group group-id="EditorPopupMenu"/>
             <add-to-group group-id="MainToolBar" anchor="last"/>
+
             <!--配置管理-->
             <action id="MrtfGitFlow.InitPluginAction" class="com.github.xiaolyuh.action.InitPluginAction"
                     text="初始化配置" description="初始化仓库配置，如果测试分支与发布分支不存在，将基于master新建" icon="/icons/config.svg"/>
             <separator/>
+
             <!--新建分支-->
             <action id="MrtfGitFlow.NewFeatureAction" class="com.github.xiaolyuh.action.NewFeatureAction"
                     text="新建开发分支" description="新建开发分支，并推送到远程仓库" icon="/icons/feature.svg"/>
             <action id="MrtfGitFlow.NewHotFixAction" class="com.github.xiaolyuh.action.NewHotFixAction"
                     text="新建修复分支" description="新建修复分支，并推送到远程仓库"/>
+            <separator/>
+
             <group id="MrtfGitFlow.RebuildBranch" popup="true" text="重建分支">
-                <action id="MrtfGitFlow.NewTestAction" class="com.github.xiaolyuh.action.NewTestAction"
+                <action id="MrtfGitFlow.RebuildTestAction" class="com.github.xiaolyuh.action.RebuildTestAction"
                         text="重建测试分支" description="重建测试分支，并推送到远程仓库，原来的分支将被删除" icon="/icons/test.svg"/>
-                <action id="MrtfGitFlow.NewReleaseAction" class="com.github.xiaolyuh.action.NewReleaseAction"
+                <action id="MrtfGitFlow.RebuildReleaseAction" class="com.github.xiaolyuh.action.RebuildReleaseAction"
                         text="重建发布分支" description="重建发布分支，并推送到远程仓库，原来的分支将被删除" icon="/icons/release.svg"/>
             </group>
             <separator/>
+
             <!--解决冲突-->
             <action id="MrtfGitFlow.ResolveConflicts" class="git4idea.actions.GitResolveConflictsAction"
                     text="解决冲突" description="解决冲突"/>
             <separator/>
+
             <!--提测-->
             <action id="MrtfGitFlow.StartTestAction" class="com.github.xiaolyuh.action.StartTestAction"
                     text="提测" description="将当前开发分支合并到test分支" icon="/icons/mergeToTest.svg" keymap="shift ctrl T">
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift T"/>
             </action>
             <separator/>
+
             <!--发布流程-->
             <action id="MrtfGitFlow.StartReleaseAction" class="com.github.xiaolyuh.action.StartReleaseAction"
                     text="开始发布" description="将当前开发分支合并到发布分支，加锁，防止再有开发分支合并到发布分支" icon="/icons/start.svg"/>
@@ -65,6 +78,7 @@
             <action id="MrtfGitFlow.FailureReleaseAction" class="com.github.xiaolyuh.action.FailureReleaseAction"
                     text="发布失败" description="解锁，这时新的开发分支可以合并到发布分支了" icon="/icons/failure.svg"/>
             <separator/>
+
             <!--帮助-->
             <action id="MrtfGitFlow.HelpAction" class="com.github.xiaolyuh.action.HelpAction"
                     text="帮助" description="帮助" icon="/icons/help.svg"/>

@@ -21,7 +21,9 @@ import git4idea.commands.GitCommandResult;
 import git4idea.repo.GitRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -32,6 +34,10 @@ import java.util.Objects;
  */
 public abstract class AbstractMergeAction extends AnAction {
     protected MrtfGitFlow mrtfGitFlow = MrtfGitFlow.getInstance();
+
+    public AbstractMergeAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
+        super(text, description, icon);
+    }
 
     @Override
     public void update(@NotNull AnActionEvent event) {
@@ -84,7 +90,7 @@ public abstract class AbstractMergeAction extends AnAction {
             new Task.Backgroundable(project, getTaskTitle(project), false) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
-                    GitRepository repository = GitBranchUtil.getGitRepository(project);
+                    GitRepository repository = GitBranchUtil.getCurrentRepository(project);
                     if (Objects.isNull(repository)) {
                         return;
                     }

@@ -95,7 +95,7 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
 
     @Override
     public String getCurrentBranch(@NotNull Project project) {
-        GitRepository repository = GitBranchUtil.getGitRepository(project);
+        GitRepository repository = GitBranchUtil.getCurrentRepository(project);
         return repository.getCurrentBranch().getName();
     }
 

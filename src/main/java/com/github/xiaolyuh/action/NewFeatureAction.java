@@ -4,6 +4,7 @@ import com.github.xiaolyuh.GitNewBranchNameValidator;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.IconLoader;
 import git4idea.GitUtil;
 
 /**
@@ -12,6 +13,10 @@ import git4idea.GitUtil;
  * @author yuhao.wang3
  */
 public class NewFeatureAction extends AbstractNewBranchAction {
+
+    public NewFeatureAction() {
+        super("新建修复分支","新建开发分支，并推送到远程仓库", IconLoader.getIcon("/icons/feature.svg"));
+    }
 
     @Override
     public String getPrefix(Project project) {

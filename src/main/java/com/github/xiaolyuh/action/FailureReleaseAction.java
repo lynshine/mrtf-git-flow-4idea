@@ -3,7 +3,11 @@ package com.github.xiaolyuh.action;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 /**
  * 发布失败
@@ -11,6 +15,10 @@ import org.jetbrains.annotations.NotNull;
  * @author yuhao.wang3
  */
 public class FailureReleaseAction extends AbstractMergeAction {
+
+    public FailureReleaseAction() {
+        super("发布失败", "解锁，这时新的开发分支可以合并到发布分支了", IconLoader.getIcon("/icons/failure.svg"));
+    }
 
     @Override
     public void update(@NotNull AnActionEvent event) {

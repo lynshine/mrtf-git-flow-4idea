@@ -4,7 +4,11 @@ import com.github.xiaolyuh.GitNewBranchNameValidator;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.IconLoader;
 import git4idea.GitUtil;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 /**
  * 新建修复分支
@@ -12,6 +16,10 @@ import git4idea.GitUtil;
  * @author yuhao.wang3
  */
 public class NewHotFixAction extends AbstractNewBranchAction {
+
+    public NewHotFixAction() {
+        super("新建修复分支","新建开发分支，并推送到远程仓库", null);
+    }
 
     @Override
     public String getPrefix(Project project) {

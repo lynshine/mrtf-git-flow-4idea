@@ -13,6 +13,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import git4idea.commands.GitCommandResult;
 import git4idea.repo.GitRepository;
@@ -27,7 +28,12 @@ import java.util.Objects;
  * @author yuhao.wang3
  */
 public class InitPluginAction extends AnAction {
+
     private MrtfGitFlow mrtfGitFlow = MrtfGitFlow.getInstance();
+
+    public InitPluginAction() {
+        super("初始化配置","初始化仓库配置，如果测试分支与发布分支不存在，将基于master新建", IconLoader.getIcon("/icons/config.svg"));
+    }
 
     @Override
     public void update(@NotNull AnActionEvent event) {
@@ -54,7 +60,7 @@ public class InitPluginAction extends AnAction {
                         NotifyUtil.notifyError(myProject, "Error", String.format("远程仓库中没有 %s 分支，MrtfGitFlow初始化失败", initOptions.getMasterBranch()));
                         return;
                     }
-                    GitRepository repository = GitBranchUtil.getGitRepository(project);
+                    GitRepository repository = GitBranchUtil.getCurrentRepository(project);
                     if (Objects.isNull(repository)) {
                         return;
                     }

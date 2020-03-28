@@ -15,7 +15,9 @@ import git4idea.commands.GitCommandResult;
 import git4idea.repo.GitRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.Objects;
 
 /**
@@ -24,7 +26,11 @@ import java.util.Objects;
  * @author yuhao.wang3
  */
 public abstract class AbstractNewBranchAction extends AnAction {
-    protected MrtfGitFlow mrtfGitFlow = MrtfGitFlow.getInstance();
+    MrtfGitFlow mrtfGitFlow = MrtfGitFlow.getInstance();
+
+    public AbstractNewBranchAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
+        super(text, description, icon);
+    }
 
     @Override
     public void update(@NotNull AnActionEvent event) {
@@ -50,7 +56,7 @@ public abstract class AbstractNewBranchAction extends AnAction {
             public void run(@NotNull ProgressIndicator indicator) {
                 final String master = ConfigUtil.getConfig(project).get().getMasterBranch();
                 ErrorsListener errorListener = new ErrorsListener(project);
-                GitRepository repository = GitBranchUtil.getGitRepository(project);
+                GitRepository repository = GitBranchUtil.getCurrentRepository(project);
                 if (Objects.isNull(repository)) {
                     return;
                 }

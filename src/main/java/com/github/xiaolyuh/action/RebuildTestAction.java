@@ -7,11 +7,16 @@ import com.intellij.openapi.util.IconLoader;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * 新建测试分支
+ * 重建测试分支
  *
  * @author yuhao.wang3
  */
-public class NewTestAction extends AbstractNewBranchAction {
+public class RebuildTestAction extends AbstractNewBranchAction {
+
+    public RebuildTestAction() {
+        super("重建测试分支", "重建测试分支，并推送到远程仓库，原来的分支将被删除",
+                IconLoader.getIcon("/icons/test.svg"));
+    }
 
     @Override
     public String getPrefix(Project project) {

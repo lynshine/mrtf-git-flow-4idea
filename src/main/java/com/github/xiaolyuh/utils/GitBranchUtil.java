@@ -7,6 +7,7 @@ import git4idea.GitRemoteBranch;
 import git4idea.GitUtil;
 import git4idea.repo.GitRepository;
 import org.apache.commons.collections.CollectionUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -71,13 +72,12 @@ public class GitBranchUtil {
     }
 
     /**
-     * 判断是否是git项目
+     * 获取当前仓库
      *
-     * @param project {@link Project}
-     * @return boolean
+     * @param project project
+     * @return
      */
-    public static GitRepository getGitRepository(Project project) {
-        List<GitRepository> repositories = GitUtil.getRepositoryManager(project).getRepositories();
-        return CollectionUtils.isNotEmpty(repositories) ? repositories.get(0) : null;
+    public static GitRepository getCurrentRepository(@NotNull Project project) {
+        return git4idea.branch.GitBranchUtil.getCurrentRepository(project);
     }
 }
