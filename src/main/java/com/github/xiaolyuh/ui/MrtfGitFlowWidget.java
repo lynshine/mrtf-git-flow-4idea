@@ -83,7 +83,7 @@ public class MrtfGitFlowWidget extends GitBranchWidget implements GitRepositoryC
         }
 
 
-        ListPopup listPopup = new PopupFactoryImpl.ActionGroupPopup("Mrtf-Git-Flow Plugin", popupGroup, SimpleDataContext.getProjectContext(project), false, false, true, true, null, -1,
+        ListPopup listPopup = new PopupFactoryImpl.ActionGroupPopup("Mrtf-Git-Flow ...", popupGroup, SimpleDataContext.getProjectContext(project), false, false, true, true, null, -1,
                 null, null);
 
         return listPopup;
