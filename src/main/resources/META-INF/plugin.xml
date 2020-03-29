@@ -1,7 +1,7 @@
 <idea-plugin>
-    <id>com.github.xiaolyuh.git-branch-manage</id>
+    <id>com.github.xiaolyuh.mrtf-git-flow-4idea</id>
     <name>MrtfGitFlow</name>
-    <vendor email="xiaolyuh@163.com" url="https://github.com/xiaolyuh/git-branch-manage">插件主页</vendor>
+    <vendor email="xiaolyuh@163.com" url="https://github.com/xiaolyuh/mrtf-git-flow-4idea">插件主页</vendor>
 
     <description>
         <![CDATA[
