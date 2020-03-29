@@ -42,3 +42,4 @@ lottery-web/logs/
 *.stackdump
 rebel.xml
 *.bak
+out/
