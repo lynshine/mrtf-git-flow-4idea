@@ -1,11 +1,21 @@
 <idea-plugin>
     <id>com.github.xiaolyuh.mrtf-git-flow-4idea</id>
     <name>MrtfGitFlow</name>
-    <vendor email="xiaolyuh@163.com" url="https://github.com/xiaolyuh/mrtf-git-flow-4idea">插件主页</vendor>
+    <vendor email="xiaolyuh@163.com" url="https://github.com/xiaolyuh/mrtf-git-flow-4idea">xiaolyuh</vendor>
 
     <description>
         <![CDATA[
-    这是一个适用于<a href="https://xiaolyuh.blog.csdn.net/article/details/105180250">mrtf git flow</a> (master,release,test,feature) 流程的分支管理插件<br>
+    这是一个适用于<a href="https://xiaolyuh.blog.csdn.net/article/details/105180250">mrtf git flow</a> (master,release,test,feature) 流程的分支管理插件 <a href="https://github.com/xiaolyuh/mrtf-git-flow-4idea">使用指南</a>。<br>
+
+     <br>
+    主要功能如下：<br>
+     1. 插件配置文件可以加入GIT版本管理，在团队内部共享；<br>
+     2. 基于origin/master新建开发分支和修复分支；<br>
+     3. 基于origin/master重建测试分支和发布分支；<br>
+     4. 开发完成后将开发分支合并到测试分支；<br>
+     5. 测试完成后将开发分支合并到发布分支，并锁定发布分支；<br>
+     6. 发布完成后将发布分支合并到origin/master分支；<br>
+     7. 发布失败将解除发布分支的锁定；<br>
     ]]>
     </description>
 
