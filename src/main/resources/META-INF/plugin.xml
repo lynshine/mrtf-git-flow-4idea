@@ -3,16 +3,11 @@
     <name>MrtfGitFlow</name>
     <vendor email="xiaolyuh@163.com" url="https://github.com/xiaolyuh/git-branch-manage">插件主页</vendor>
 
-    <description><![CDATA[
-    这是一个适用于mrtf git flow (master,release,test,feature) 流程的分支管理插件<br>
-    <em>most HTML tags may be used</em>
-    ]]></description>
-
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-         on how to target different products -->
-    <!-- uncomment to enable plugin in all products
-    <depends>com.intellij.modules.lang</depends>
-    -->
+    <description>
+        <![CDATA[
+    这是一个适用于<a href="https://xiaolyuh.blog.csdn.net/article/details/105180250">mrtf git flow</a> (master,release,test,feature) 流程的分支管理插件<br>
+    ]]>
+    </description>
 
     <depends>com.intellij.modules.vcs</depends>
     <depends>com.intellij.tasks</depends>
