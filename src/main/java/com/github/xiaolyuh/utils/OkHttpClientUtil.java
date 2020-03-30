@@ -32,56 +32,13 @@ public abstract class OkHttpClientUtil {
      * @param url           地址
      * @param param         参数
      * @param interfaceName 接口名称
-     * @return
-     * @throws Exception
+     * @return T
+     * @throws Exception Exception
      */
     public static <T> T postApplicationJson(String url, Object param, String interfaceName, Class<T> clazz) {
         // 生成requestBody
         RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8")
                 , JSON.toJSONString(param));
-
-        return post(url, interfaceName, requestBody, param, null, clazz);
-    }
-
-    /**
-     * 发起 application/json 的 post 请求
-     *
-     * @param url           地址
-     * @param param         参数
-     * @param interfaceName 接口名称
-     * @return
-     * @throws Exception
-     */
-    public static <T> T postApplicationJson(String url, Object param, Map<String, String> header, String interfaceName, Class<T> clazz) {
-        // 生成requestBody
-        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8")
-                , JSON.toJSONString(param));
-
-        return post(url, interfaceName, requestBody, param, header, clazz);
-    }
-
-    /**
-     * 发起 x-www-form-urlencoded 的 post 请求
-     *
-     * @param url           地址
-     * @param param         参数
-     * @param interfaceName 接口名称
-     * @return
-     * @throws Exception
-     */
-    public static <T> T postApplicationXWwwFormUrlencoded(String url, Object param, String interfaceName, Class<T> clazz) {
-        Map<String, String> paramMap = JSON.parseObject(JSON.toJSONString(param), new TypeReference<Map<String, String>>() {
-        });
-        // 生成requestBody
-        StringBuilder content = new StringBuilder(128);
-        for (Map.Entry<String, String> entry : paramMap.entrySet()) {
-            content.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
-        }
-        if (content.length() > 0) {
-            content.deleteCharAt(content.length() - 1);
-        }
-
-        RequestBody requestBody = FormBody.create(MediaType.parse("application/x-www-form-urlencoded"), content.toString());
 
         return post(url, interfaceName, requestBody, param, null, clazz);
     }

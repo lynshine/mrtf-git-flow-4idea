@@ -15,7 +15,7 @@ import git4idea.GitUtil;
 public class NewFeatureAction extends AbstractNewBranchAction {
 
     public NewFeatureAction() {
-        super("新建修复分支","新建开发分支，并推送到远程仓库", IconLoader.getIcon("/icons/feature.svg"));
+        super("新建开发分支","新建开发分支，并推送到远程仓库", IconLoader.getIcon("/icons/feature.svg"));
     }
 
     @Override

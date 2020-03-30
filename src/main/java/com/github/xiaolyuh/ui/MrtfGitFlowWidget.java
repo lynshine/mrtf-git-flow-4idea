@@ -1,36 +1,33 @@
 package com.github.xiaolyuh.ui;
 
 import com.github.xiaolyuh.action.*;
-import com.github.xiaolyuh.utils.GitBranchUtil;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.ui.popup.PopupFactoryImpl;
-import com.intellij.util.Consumer;
 import git4idea.actions.GitResolveConflictsAction;
-import git4idea.repo.GitRepository;
-import git4idea.repo.GitRepositoryChangeListener;
-import git4idea.ui.branch.GitBranchWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.awt.event.MouseEvent;
 
 /**
  * mrtf git flow 状态栏小部件
  *
  * @author yuhao.wang3
  */
-public class MrtfGitFlowWidget extends GitBranchWidget implements GitRepositoryChangeListener {
+public class MrtfGitFlowWidget extends EditorBasedStatusBarPopup {
 
     DefaultActionGroup popupGroup;
+    Project project;
+
 
     public MrtfGitFlowWidget(@NotNull Project project) {
         super(project);
-        project.getMessageBus().connect().subscribe(GitRepository.GIT_REPO_CHANGE, this);
+        this.project = project;
 
         //No advanced features in the status-bar widget
         popupGroup = new DefaultActionGroup();
@@ -61,73 +58,35 @@ public class MrtfGitFlowWidget extends GitBranchWidget implements GitRepositoryC
         popupGroup.add(new Separator());
 
         popupGroup.add(new HelpAction());
-
-
-        updateAsync();
     }
 
+
+    @NotNull
     @Override
-    public void repositoryChanged(@NotNull GitRepository repository) {
-        updateAsync();
-    }
-
-    @Override
-    public ListPopup getPopupStep() {
-        Project project = getProject();
-        if (project == null) {
-            return null;
-        }
-        GitRepository repo = GitBranchUtil.getCurrentRepository(project);
-        if (repo == null) {
-            return null;
-        }
-
-
-        ListPopup listPopup = new PopupFactoryImpl.ActionGroupPopup("Mrtf-Git-Flow ...", popupGroup, SimpleDataContext.getProjectContext(project), false, false, true, true, null, -1,
-                null, null);
-
-        return listPopup;
-    }
-
-    @Override
-    public String getSelectedValue() {
-        return "MrtfGitFlow";
+    protected WidgetState getWidgetState(@Nullable VirtualFile file) {
+        return new WidgetState("MrtfGitFlow", "MrtfGitFlow", true);
     }
 
     @Nullable
     @Override
-    public String getTooltipText() {
-        return "MrtfGitFlow";
-    }
-
-    /**
-     * Updates branch information on click
-     *
-     * @return
-     */
-    @Override
-    public Consumer<MouseEvent> getClickConsumer() {
-        return mouseEvent -> updateAsync();
-    }
-
-    private void updateAsync() {
-        ApplicationManager.getApplication().invokeLater(this::update);
-    }
-
-    private void update() {
-        Project project = getProject();
+    protected ListPopup createPopup(DataContext context) {
         if (project == null) {
-            return;
+            return null;
         }
 
-        GitRepository repo = GitBranchUtil.getCurrentRepository(project);
-        if (repo == null) {
-            return;
-        }
+        return new PopupFactoryImpl.ActionGroupPopup("Mrtf-Git-Flow ...", popupGroup, SimpleDataContext.getProjectContext(project), false, false, true, true, null, -1,
+                null, null);
+    }
 
-        if (myStatusBar != null) {
-            myStatusBar.updateWidget(ID());
-        }
+    @Override
+    protected void registerCustomListeners() {
+
+    }
+
+    @NotNull
+    @Override
+    protected StatusBarWidget createInstance(Project project) {
+        return new MrtfGitFlowWidget(project);
     }
 
     @NotNull
@@ -135,5 +94,4 @@ public class MrtfGitFlowWidget extends GitBranchWidget implements GitRepositoryC
     public String ID() {
         return MrtfGitFlowWidget.class.getName();
     }
-
 }

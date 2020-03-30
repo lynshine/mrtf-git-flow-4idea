@@ -28,9 +28,8 @@ public interface MrtfGitFlow {
      * 初始化插件
      *
      * @param repository GitRepository
-     * @param reInit     是否从初始化
      */
-    void addConfigToGit(GitRepository repository, boolean reInit);
+    void addConfigToGit(GitRepository repository);
 
     /**
      * 以远程master为根新创建本地分支
@@ -144,4 +143,12 @@ public interface MrtfGitFlow {
      * @param repository repository
      */
     void thirdPartyNotify(GitRepository repository);
+
+    /**
+     * 是否存在未提交文件
+     *
+     * @param project
+     * @return
+     */
+    boolean isExistChangeFile(@NotNull Project project);
 }

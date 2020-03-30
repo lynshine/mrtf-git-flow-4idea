@@ -1,13 +1,13 @@
 package com.github.xiaolyuh;
 
-import com.github.xiaolyuh.utils.ConfigUtil;
-import com.github.xiaolyuh.utils.GitBranchUtil;
-import com.github.xiaolyuh.utils.NotifyUtil;
-import com.github.xiaolyuh.utils.OkHttpClientUtil;
+import com.alibaba.fastjson.JSON;
+import com.github.xiaolyuh.utils.*;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.VcsException;
+import com.intellij.openapi.vcs.changes.Change;
+import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.vcsUtil.VcsUtil;
 import git4idea.GitUtil;
 import git4idea.commands.*;
@@ -17,15 +17,12 @@ import git4idea.repo.GitRemote;
 import git4idea.repo.GitRepository;
 import git4idea.util.GitFileUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.Objects;
-
-import static git4idea.GitUtil.updateAndRefreshVfs;
 
 /**
  * @author yuhao.wang3
@@ -35,10 +32,7 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
     private Git git = Git.getInstance();
 
     @Override
-    public void addConfigToGit(GitRepository repository, boolean reInit) {
-        if (reInit) {
-            return;
-        }
+    public void addConfigToGit(GitRepository repository) {
         try {
             String filePath = repository.getProject().getBasePath() + File.separator + Constants.CONFIG_FILE_NAME;
             FilePath path = VcsUtil.getFilePath(filePath);
@@ -69,7 +63,7 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
         // 切换分支
         git.checkout(repository, newBranchName, null, true, false);
         // 推送分支
-        return push(repository, newBranchName, listeners);
+        return push(repository, newBranchName, true, listeners);
     }
 
     @Override
@@ -128,18 +122,15 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
     public GitCommandResult mergeBranchAndPush(GitRepository repository, String currentBranch, String targetBranch,
                                                TagOptions tagOptions, GitLineHandlerListener errorListener) {
         // 判断目标分支是否存在
-        String master = ConfigUtil.getConfig(repository.getProject()).get().getMasterBranch();
-        if (!GitBranchUtil.getLocalBranches(repository.getProject()).contains(targetBranch)) {
-            GitCommandResult result = newNewBranchBaseRemoteMaster(repository, master, targetBranch, errorListener);
-            if (!result.success()) {
-                return result;
-            }
+        GitCommandResult result = checkTargetBranchIsExist(repository, targetBranch, errorListener);
+        if (Objects.nonNull(result) && !result.success()) {
+            return result;
         }
 
         // 切换到目标分支
         git.checkout(repository, targetBranch, null, true, false);
         // pull最新代码
-        GitCommandResult result = pull(repository, targetBranch, errorListener);
+        result = pull(repository, targetBranch, errorListener);
         if (!result.success()) {
             return result;
         }
@@ -150,8 +141,6 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
 
         boolean allConflictsResolved = true;
         if (mergeConflict.hasHappened()) {
-            // 发生冲突
-            updateAndRefreshVfs(repository);
             // 解决冲突
             allConflictsResolved = new MyMergeConflictResolver(repository, currentBranch, targetBranch).merge();
         }
@@ -169,7 +158,7 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
         }
 
         // push代码
-        result = push(repository, targetBranch, errorListener);
+        result = push(repository, targetBranch, false, errorListener);
         if (!result.success()) {
             return result;
         }
@@ -233,6 +222,45 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
         }
     }
 
+    @Override
+    public boolean isExistChangeFile(@NotNull Project project) {
+        Collection<Change> changes = ChangeListManager.getInstance(project).getAllChanges();
+        if (CollectionUtils.isNotEmpty(changes)) {
+            NotifyUtil.notifyError(project, "Error", String.format("当前分支存在未提交的文件: %s", JSON.toJSON(changes)));
+            return true;
+        }
+        return false;
+    }
+
+    private GitCommandResult checkTargetBranchIsExist(GitRepository repository, String targetBranch, GitLineHandlerListener errorListener) {
+        // 判断本地是否存在分支
+        if (!GitBranchUtil.getLocalBranches(repository.getProject()).contains(targetBranch)) {
+            if (GitBranchUtil.getRemoteBranches(repository.getProject()).contains(targetBranch)) {
+                return checkoutNewBranch(repository, targetBranch, errorListener);
+            } else {
+                String master = ConfigUtil.getConfig(repository.getProject()).get().getMasterBranch();
+                return newNewBranchBaseRemoteMaster(repository, master, targetBranch, errorListener);
+            }
+        }
+
+        return null;
+    }
+
+    private GitCommandResult checkoutNewBranch(GitRepository repository, String targetBranch, GitLineHandlerListener errorListener) {
+        // git checkout -b 本地分支名x origin/远程分支名x
+        final GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.CHECKOUT);
+        h.setSilent(false);
+        h.setStdoutSuppressed(false);
+        h.addParameters("-b");
+        h.addParameters(targetBranch);
+        h.addParameters("origin/" + targetBranch);
+        if (errorListener != null) {
+            h.addLineListener(errorListener);
+        }
+        return git.runCommand(h);
+    }
+
+
     private GitCommandResult createNewTag(@NotNull GitRepository repository, @Nullable String tagName,
                                           @Nullable String message, @Nullable GitLineHandlerListener... listeners) {
         final GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.TAG);
@@ -263,7 +291,7 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
         return git.runCommand(h);
     }
 
-    private GitCommandResult push(GitRepository repository, String branchName, GitLineHandlerListener... listeners) {
+    private GitCommandResult push(GitRepository repository, String branchName, boolean isNewBranch, GitLineHandlerListener... listeners) {
         GitRemote remote = getDefaultRemote(repository);
         GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.PUSH);
         h.setSilent(false);
@@ -272,6 +300,9 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
         h.addParameters("origin");
         h.addParameters(branchName + ":" + branchName);
         h.addParameters("--tag");
+        if (isNewBranch) {
+            h.addParameters("--set-upstream");
+        }
         for (GitLineHandlerListener listener : listeners) {
             h.addLineListener(listener);
         }

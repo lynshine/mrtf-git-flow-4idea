@@ -7,16 +7,15 @@ import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.VcsListener;
 import com.intellij.openapi.vcs.VcsRoot;
 import com.intellij.openapi.wm.StatusBar;
-import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.messages.MessageBus;
 import git4idea.GitVcs;
-import git4idea.ui.branch.GitBranchWidget;
 import org.jetbrains.annotations.NotNull;
 
 
 /**
  * Gitflow 组件
+ *
  * @author yuhao.wang3
  */
 public class MrtfGitFlowComponent implements ProjectComponent, VcsListener {
@@ -44,20 +43,20 @@ public class MrtfGitFlowComponent implements ProjectComponent, VcsListener {
     public void directoryMappingChanged() {
         VcsRoot[] vcsRoots = ProjectLevelVcsManager.getInstance(project).getAllVcsRoots();
         StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
-
         //git repo present
         if (vcsRoots.length > 0 && vcsRoots[0].getVcs() instanceof GitVcs) {
             //make sure to not reinitialize the widget if it's already present
             if (mrtfGitFlowWidget == null) {
                 mrtfGitFlowWidget = new MrtfGitFlowWidget(project);
-                mrtfGitFlowWidget.activate();
+
+                statusBar.addWidget(mrtfGitFlowWidget, StatusBar.Anchors.DEFAULT_ANCHOR, project);
+                mrtfGitFlowWidget.update();
             }
         } else {
             if (mrtfGitFlowWidget != null) {
-                mrtfGitFlowWidget.deactivate();
+                mrtfGitFlowWidget.dispose();
             }
             mrtfGitFlowWidget = null;
         }
     }
-
 }

@@ -6,6 +6,7 @@ import com.github.xiaolyuh.listener.ErrorsListener;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.utils.GitBranchUtil;
 import com.github.xiaolyuh.utils.NotifyUtil;
+import com.github.xiaolyuh.utils.StringUtils;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -19,7 +20,6 @@ import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import git4idea.commands.GitCommandResult;
 import git4idea.repo.GitRepository;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,21 +80,25 @@ public abstract class AbstractMergeAction extends AnAction {
     }
 
     void actionPerformed(@NotNull AnActionEvent event, TagOptions tagOptions) {
-        Project project = event.getProject();
-        String currentBranch = getCurrentBranch(project);
-        String targetBranch = getTargetBranch(project);
+        final Project project = event.getProject();
+        final String currentBranch = getCurrentBranch(project);
+        final String targetBranch = getTargetBranch(project);
+
+        final GitRepository repository = GitBranchUtil.getCurrentRepository(project);
+        if (Objects.isNull(repository)) {
+            return;
+        }
 
         int flag = Messages.showOkCancelDialog(project, getDialogContent(project),
-                getDialogTitle(project), IconLoader.getIcon("/icons/warning.svg"));
+                getDialogTitle(project), "确认", "取消", IconLoader.getIcon("/icons/warning.svg"));
         if (flag == 0) {
             new Task.Backgroundable(project, getTaskTitle(project), false) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
-                    GitRepository repository = GitBranchUtil.getCurrentRepository(project);
-                    if (Objects.isNull(repository)) {
+                    if (mrtfGitFlow.isExistChangeFile(project)) {
                         return;
                     }
-
+                    
                     // 加锁
                     if (isLock() && !mrtfGitFlow.lock(repository, getCurrentBranch(project))) {
                         String msg = mrtfGitFlow.getRemoteLastCommit(repository, getTargetBranch(project));

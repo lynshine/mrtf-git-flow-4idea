@@ -5,6 +5,7 @@ import com.github.xiaolyuh.listener.ErrorsListener;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.utils.GitBranchUtil;
 import com.github.xiaolyuh.utils.NotifyUtil;
+import com.github.xiaolyuh.utils.StringUtils;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -13,7 +14,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import git4idea.commands.GitCommandResult;
 import git4idea.repo.GitRepository;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,15 +51,21 @@ public abstract class AbstractNewBranchAction extends AnAction {
 
         // 获取开发分支完整名称
         final String newBranchName = featurePrefix + inputString;
+        final GitRepository repository = GitBranchUtil.getCurrentRepository(project);
+        if (Objects.isNull(repository)) {
+            return;
+        }
+
         new Task.Backgroundable(project, getTitle(newBranchName), false) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 final String master = ConfigUtil.getConfig(project).get().getMasterBranch();
-                ErrorsListener errorListener = new ErrorsListener(project);
-                GitRepository repository = GitBranchUtil.getCurrentRepository(project);
-                if (Objects.isNull(repository)) {
+
+                if (mrtfGitFlow.isExistChangeFile(project)) {
                     return;
                 }
+
+                ErrorsListener errorListener = new ErrorsListener(project);
                 if (isDeleteBranch()) {
                     // 删除分支
                     GitCommandResult result = mrtfGitFlow.deleteBranch(repository, master, newBranchName, errorListener);

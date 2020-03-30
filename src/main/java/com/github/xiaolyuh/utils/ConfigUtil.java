@@ -5,7 +5,6 @@ import com.github.xiaolyuh.Constants;
 import com.github.xiaolyuh.InitOptions;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.project.Project;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;

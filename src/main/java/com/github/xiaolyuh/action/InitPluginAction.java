@@ -32,7 +32,7 @@ public class InitPluginAction extends AnAction {
     private MrtfGitFlow mrtfGitFlow = MrtfGitFlow.getInstance();
 
     public InitPluginAction() {
-        super("初始化配置","初始化仓库配置，如果测试分支与发布分支不存在，将基于master新建", IconLoader.getIcon("/icons/config.svg"));
+        super("初始化配置", "初始化仓库配置，如果测试分支与发布分支不存在，将基于master新建", IconLoader.getIcon("/icons/config.svg"));
     }
 
     @Override
@@ -43,8 +43,13 @@ public class InitPluginAction extends AnAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent event) {
+    public void actionPerformed(@NotNull AnActionEvent event) {
         final Project project = event.getProject();
+        final GitRepository repository = GitBranchUtil.getCurrentRepository(project);
+        if (Objects.isNull(repository)) {
+            return;
+        }
+
         InitPluginDialog initPluginDialog = new InitPluginDialog(project);
         initPluginDialog.show();
 
@@ -58,10 +63,6 @@ public class InitPluginAction extends AnAction {
                     List<String> remoteBranches = GitBranchUtil.getRemoteBranches(project);
                     if (!remoteBranches.contains(initOptions.getMasterBranch())) {
                         NotifyUtil.notifyError(myProject, "Error", String.format("远程仓库中没有 %s 分支，MrtfGitFlow初始化失败", initOptions.getMasterBranch()));
-                        return;
-                    }
-                    GitRepository repository = GitBranchUtil.getCurrentRepository(project);
-                    if (Objects.isNull(repository)) {
                         return;
                     }
 
@@ -96,7 +97,7 @@ public class InitPluginAction extends AnAction {
                     ConfigUtil.saveConfigToFile(project, configJson);
 
                     // 将配置文件加入GIT管理
-                    mrtfGitFlow.addConfigToGit(repository, ConfigUtil.isInit(project));
+                    mrtfGitFlow.addConfigToGit(repository);
 
                     NotifyUtil.notifySuccess(myProject, "Success", "MrtfGitFlow初始化成功");
 
