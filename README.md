@@ -101,5 +101,10 @@ xxx 服务发布分支已被锁定，最后一次操作：
 github 地址：https://github.com/wyh-chenfeng/layering-cache
 
 
+# 捐赠
+项目的发展离不开你的支持，请作者喝杯咖啡吧！
+
+![donate.png](https://github.com/xiaolyuh/mrtf-git-flow-4idea/blob/master/images/donate.png)
+
 
 
