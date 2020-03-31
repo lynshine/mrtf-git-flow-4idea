@@ -69,9 +69,9 @@ public abstract class ConfigUtil {
      * @return InitOptions
      */
     public static Optional<InitOptions> getConfig(@NotNull Project project) {
-        InitOptions options = getConfigToLocal(project);
+        InitOptions options = getConfigToFile(project);
         if (Objects.isNull(options)) {
-            options = getConfigToFile(project);
+            options = getConfigToLocal(project);
         }
 
         return Optional.ofNullable(options);
