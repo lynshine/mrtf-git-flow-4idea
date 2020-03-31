@@ -67,7 +67,6 @@ public class MrtfGitFlowWidget extends EditorBasedWidget implements StatusBarWid
 
     public void update() {
         myComponent.setVisible(true);
-        myComponent.setIcon(IconLoader.getIcon("/icons/icon.svg"));
         myComponent.setToolTipText("MrtfGitFlow");
         myComponent.setText("MrtfGitFlow");
         myComponent.invalidate();

@@ -42,7 +42,6 @@
         <group id="MrtfGitFlow.Menu" text="MrtfGitFlow" description="GIT分支管理" icon="/icons/icon.svg"
                popup="true">
 
-            <add-to-group group-id="EditorPopupMenu"/>
             <add-to-group group-id="MainToolBar" anchor="last"/>
 
             <!--配置管理-->
