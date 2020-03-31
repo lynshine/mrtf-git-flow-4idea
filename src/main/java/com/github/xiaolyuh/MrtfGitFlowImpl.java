@@ -1,6 +1,5 @@
 package com.github.xiaolyuh;
 
-import com.alibaba.fastjson.JSON;
 import com.github.xiaolyuh.utils.*;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
@@ -226,7 +225,9 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
     public boolean isExistChangeFile(@NotNull Project project) {
         Collection<Change> changes = ChangeListManager.getInstance(project).getAllChanges();
         if (CollectionUtils.isNotEmpty(changes)) {
-            NotifyUtil.notifyError(project, "Error", String.format("当前分支存在未提交的文件: %s", JSON.toJSON(changes)));
+            StringBuffer builder = new StringBuffer();
+            changes.parallelStream().forEach(change -> builder.append(change.toString() + "\r\n"));
+            NotifyUtil.notifyError(project, "Error", String.format("当前分支存在未提交的文件:\r\n %s", builder.toString()));
             return true;
         }
         return false;
