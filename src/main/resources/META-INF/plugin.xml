@@ -23,6 +23,8 @@
     <depends>com.intellij.tasks</depends>
     <depends>Git4Idea</depends>
 
+    <idea-version since-build="2018.1" until-build="2019.3.4"/>
+
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
         <applicationService serviceInterface="com.github.xiaolyuh.MrtfGitFlow"
