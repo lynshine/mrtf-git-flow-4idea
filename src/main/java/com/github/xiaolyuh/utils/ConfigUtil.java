@@ -69,9 +69,9 @@ public abstract class ConfigUtil {
      * @return InitOptions
      */
     public static Optional<InitOptions> getConfig(@NotNull Project project) {
-        InitOptions options = getConfigToLocal(project);
+        InitOptions options = getConfigToFile(project);
         if (Objects.isNull(options)) {
-            options = getConfigToFile(project);
+            options = getConfigToLocal(project);
         }
 
         return Optional.ofNullable(options);
@@ -99,27 +99,31 @@ public abstract class ConfigUtil {
      * @return InitOptions
      */
     private static InitOptions getConfigToFile(Project project) {
-        String filePath = project.getBasePath() + File.separator + Constants.CONFIG_FILE_NAME;
-        File file = new File(filePath);
-        if (file.exists()) {
-            StringBuilder result = new StringBuilder();
-            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                String s;
-                //使用readLine方法，一次读一行
-                while ((s = br.readLine()) != null) {
-                    result.append(s);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            String config = result.toString().replace(" ", "");
-            if (StringUtils.isNotBlank(config)) {
-                try {
-                    return JSON.parseObject(config, InitOptions.class);
+        try {
+            String filePath = project.getBasePath() + File.separator + Constants.CONFIG_FILE_NAME;
+            File file = new File(filePath);
+            if (file.exists()) {
+                StringBuilder result = new StringBuilder();
+                try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                    String s;
+                    //使用readLine方法，一次读一行
+                    while ((s = br.readLine()) != null) {
+                        result.append(s);
+                    }
                 } catch (Exception e) {
-                    throw new RuntimeException("配置内容格式错误", e);
+                    throw new RuntimeException(e);
+                }
+                String config = result.toString().replace(" ", "");
+                if (StringUtils.isNotBlank(config)) {
+                    try {
+                        return JSON.parseObject(config, InitOptions.class);
+                    } catch (Exception e) {
+                        throw new RuntimeException("配置内容格式错误", e);
+                    }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return null;

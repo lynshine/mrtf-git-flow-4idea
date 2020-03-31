@@ -25,4 +25,13 @@ public class ErrorsListener implements GitLineHandlerListener {
         }
     }
 
+    @Override
+    public void processTerminated(int exitCode) {
+
+    }
+
+    @Override
+    public void startFailed(Throwable exception) {
+
+    }
 }

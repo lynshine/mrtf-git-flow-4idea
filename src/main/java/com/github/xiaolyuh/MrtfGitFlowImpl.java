@@ -15,7 +15,6 @@ import git4idea.merge.GitMerger;
 import git4idea.repo.GitRemote;
 import git4idea.repo.GitRepository;
 import git4idea.util.GitFileUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -353,7 +352,7 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
 
         MyMergeConflictResolver(GitRepository repository, String currentBranch, String targetBranch) {
             super(repository.getProject(), git, new GitMerger(repository.getProject()),
-                    GitUtil.getRootsFromRepositories(Lists.newArrayList(repository)), new Params(repository.getProject()), true);
+                    GitUtil.getRootsFromRepositories(Lists.newArrayList(repository)), new Params(), true);
             this.currentBranch = currentBranch;
             this.targetBranch = targetBranch;
         }

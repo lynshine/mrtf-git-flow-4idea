@@ -6,7 +6,6 @@ import git4idea.GitReference;
 import git4idea.GitRemoteBranch;
 import git4idea.GitUtil;
 import git4idea.repo.GitRepository;
-import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

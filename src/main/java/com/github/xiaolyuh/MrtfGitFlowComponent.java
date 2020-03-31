@@ -10,6 +10,7 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.messages.MessageBus;
 import git4idea.GitVcs;
+import git4idea.ui.branch.GitBranchWidget;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -49,7 +50,7 @@ public class MrtfGitFlowComponent implements ProjectComponent, VcsListener {
             if (mrtfGitFlowWidget == null) {
                 mrtfGitFlowWidget = new MrtfGitFlowWidget(project);
 
-                statusBar.addWidget(mrtfGitFlowWidget, StatusBar.Anchors.DEFAULT_ANCHOR, project);
+                statusBar.addWidget(mrtfGitFlowWidget, "after " + GitBranchWidget.class.getName(), project);
                 mrtfGitFlowWidget.update();
             }
         } else {

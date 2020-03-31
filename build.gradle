@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.xiaolyuh'
-version '1.0.2'
+version '1.0.0'
 
 sourceCompatibility = 1.8
 
@@ -19,8 +19,9 @@ dependencies {
 }
 
 intellij {
-    version '2018.3.2'
+    version '2018.1'
     plugins 'git4idea', 'tasks'
+    intellij.updateSinceUntilBuild false
 }
 patchPluginXml {
     changeNotes """

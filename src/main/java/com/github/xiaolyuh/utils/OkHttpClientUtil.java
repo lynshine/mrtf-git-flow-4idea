@@ -1,9 +1,7 @@
 package com.github.xiaolyuh.utils;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import okhttp3.*;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +55,7 @@ public abstract class OkHttpClientUtil {
                 .url(url)
                 .post(requestBody);
 
-        if (MapUtils.isNotEmpty(headers)) {
+        if (!isEmpty(headers)) {
             for (String key : headers.keySet()) {
                 builder.addHeader(key, headers.get(key));
             }
@@ -94,5 +92,9 @@ public abstract class OkHttpClientUtil {
         }
 
         return JSON.parseObject(result, clazz);
+    }
+
+    public static boolean isEmpty(Map map) {
+        return map == null || map.isEmpty();
     }
 }
