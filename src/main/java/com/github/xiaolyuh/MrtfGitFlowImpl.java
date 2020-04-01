@@ -9,7 +9,9 @@ import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.vcsUtil.VcsUtil;
 import git4idea.GitUtil;
+import git4idea.GitVcs;
 import git4idea.commands.*;
+import git4idea.config.GitVersionSpecialty;
 import git4idea.merge.GitMergeCommittingConflictResolver;
 import git4idea.merge.GitMerger;
 import git4idea.repo.GitRemote;
@@ -230,6 +232,19 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void fetch(GitRepository repository) {
+        GitRemote remote = getDefaultRemote(repository);
+        git.runCommand(() -> {
+            final GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.FETCH);
+            h.setSilent(false);
+            h.setStdoutSuppressed(false);
+            h.setUrls(remote.getUrls());
+            h.addParameters(remote.getName());
+            return h;
+        });
     }
 
     private GitCommandResult checkTargetBranchIsExist(GitRepository repository, String targetBranch, GitLineHandlerListener errorListener) {

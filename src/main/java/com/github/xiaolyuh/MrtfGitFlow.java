@@ -151,4 +151,10 @@ public interface MrtfGitFlow {
      * @return
      */
     boolean isExistChangeFile(@NotNull Project project);
+
+    /**
+     * git fetch
+     * @param repository
+     */
+    void fetch(GitRepository repository);
 }
