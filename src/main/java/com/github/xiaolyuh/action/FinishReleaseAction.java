@@ -23,13 +23,14 @@ public class FinishReleaseAction extends AbstractMergeAction {
     public void update(@NotNull AnActionEvent event) {
         super.update(event);
         if (event.getPresentation().isEnabled()) {
-            event.getPresentation().setEnabled(mrtfGitFlow.isLock(event.getProject()));
+            event.getPresentation().setEnabled(gitFlowPlus.isLock(event.getProject()));
         }
     }
 
     @Override
     public void actionPerformed(AnActionEvent event) {
         Project project = event.getProject();
+
         TagDialog tagDialog = new TagDialog(project);
         tagDialog.show();
         if (tagDialog.isOK()) {

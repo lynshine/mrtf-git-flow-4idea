@@ -10,15 +10,15 @@ public class Constants {
     /**
      * 本地缓存前缀
      */
-    public static final String KEY_PREFIX = "mrtf-git-flow:";
+    public static final String KEY_PREFIX = "git-flow-plus:";
 
     /**
      * 配置文件名称
      */
-    public static final String CONFIG_FILE_NAME = "mrtf-git-flow.config";
+    public static final String CONFIG_FILE_NAME = "git-flow-plus.config";
 
     /**
      * 加锁分支名称
      */
-    public static final String LOCK_BRANCH_NAME = "MRTF_LOCK_BRANCH_NAME";
+    public static final String LOCK_BRANCH_NAME = "GFP_LOCK_BRANCH_NAME";
 }

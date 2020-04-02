@@ -23,7 +23,7 @@ public class RebuildReleaseAction extends AbstractNewBranchAction {
     public void update(@NotNull AnActionEvent event) {
         super.update(event);
         if (event.getPresentation().isEnabled()) {
-            event.getPresentation().setEnabled(!mrtfGitFlow.isLock(event.getProject()));
+            event.getPresentation().setEnabled(!gitFlowPlus.isLock(event.getProject()));
         }
     }
 

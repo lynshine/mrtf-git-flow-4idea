@@ -1,6 +1,7 @@
 package com.github.xiaolyuh.ui;
 
 import com.github.xiaolyuh.action.*;
+import com.intellij.openapi.actionSystem.CustomShortcutSet;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
@@ -27,13 +28,13 @@ import java.awt.event.MouseEvent;
  *
  * @author yuhao.wang3
  */
-public class MrtfGitFlowWidget extends EditorBasedWidget implements StatusBarWidget.Multiframe, CustomStatusBarWidget {
+public class GitFlowPlusWidget extends EditorBasedWidget implements StatusBarWidget.Multiframe, CustomStatusBarWidget {
     private final TextPanel.WithIconAndArrows myComponent;
     DefaultActionGroup popupGroup;
     Project project;
 
 
-    public MrtfGitFlowWidget(@NotNull Project project) {
+    public GitFlowPlusWidget(@NotNull Project project) {
         super(project);
         this.project = project;
 
@@ -53,7 +54,7 @@ public class MrtfGitFlowWidget extends EditorBasedWidget implements StatusBarWid
     }
 
     private void showPopup(MouseEvent e) {
-        ListPopup popup = new PopupFactoryImpl.ActionGroupPopup("Mrtf - Git - Flow ...", popupGroup, SimpleDataContext.getProjectContext(project),
+        ListPopup popup = new PopupFactoryImpl.ActionGroupPopup("GitFlowPlus", popupGroup, SimpleDataContext.getProjectContext(project),
                 false, false, true, true, null, -1, null, null);
 
         if (popup != null) {
@@ -66,8 +67,8 @@ public class MrtfGitFlowWidget extends EditorBasedWidget implements StatusBarWid
 
     public void update() {
         myComponent.setVisible(true);
-        myComponent.setToolTipText("MrtfGitFlow");
-        myComponent.setText("MrtfGitFlow");
+        myComponent.setToolTipText("GitFlowPlus");
+        myComponent.setText("GitFlowPlus");
         myComponent.invalidate();
         if (myStatusBar != null) {
             myStatusBar.updateWidget(ID());
@@ -95,7 +96,9 @@ public class MrtfGitFlowWidget extends EditorBasedWidget implements StatusBarWid
         popupGroup.add(conflictsAction);
         popupGroup.add(new Separator());
 
-        popupGroup.add(new StartTestAction());
+        StartTestAction action = new StartTestAction();
+        action.registerCustomShortcutSet(new CustomShortcutSet(KeyStroke.getKeyStroke("ctrl shift T")), myComponent);
+        popupGroup.add(action);
         popupGroup.add(new Separator());
 
         popupGroup.add(new StartReleaseAction());
@@ -114,13 +117,13 @@ public class MrtfGitFlowWidget extends EditorBasedWidget implements StatusBarWid
 
     @Override
     public StatusBarWidget copy() {
-        return new MrtfGitFlowWidget(project);
+        return new GitFlowPlusWidget(project);
     }
 
     @NotNull
     @Override
     public String ID() {
-        return MrtfGitFlowWidget.class.getName();
+        return GitFlowPlusWidget.class.getName();
     }
 
     @Nullable

@@ -1,6 +1,6 @@
 package com.github.xiaolyuh;
 
-import com.github.xiaolyuh.ui.MrtfGitFlowWidget;
+import com.github.xiaolyuh.ui.GitFlowPlusWidget;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
@@ -19,12 +19,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author yuhao.wang3
  */
-public class MrtfGitFlowComponent implements ProjectComponent, VcsListener {
+public class GitFlowPlusComponent implements ProjectComponent, VcsListener {
     Project project;
-    MrtfGitFlowWidget mrtfGitFlowWidget;
+    GitFlowPlusWidget gitFlowPlusWidget;
     MessageBus messageBus;
 
-    public MrtfGitFlowComponent(Project project) {
+    public GitFlowPlusComponent(Project project) {
         this.project = project;
     }
 
@@ -37,7 +37,7 @@ public class MrtfGitFlowComponent implements ProjectComponent, VcsListener {
     @NotNull
     @Override
     public String getComponentName() {
-        return MrtfGitFlowComponent.class.getSimpleName();
+        return GitFlowPlusComponent.class.getSimpleName();
     }
 
     @Override
@@ -47,17 +47,17 @@ public class MrtfGitFlowComponent implements ProjectComponent, VcsListener {
         //git repo present
         if (vcsRoots.length > 0 && vcsRoots[0].getVcs() instanceof GitVcs) {
             //make sure to not reinitialize the widget if it's already present
-            if (mrtfGitFlowWidget == null) {
-                mrtfGitFlowWidget = new MrtfGitFlowWidget(project);
+            if (gitFlowPlusWidget == null) {
+                gitFlowPlusWidget = new GitFlowPlusWidget(project);
 
-                statusBar.addWidget(mrtfGitFlowWidget, "after " + GitBranchWidget.class.getName(), project);
-                mrtfGitFlowWidget.update();
+                statusBar.addWidget(gitFlowPlusWidget, "after " + GitBranchWidget.class.getName(), project);
+                gitFlowPlusWidget.update();
             }
         } else {
-            if (mrtfGitFlowWidget != null) {
-                mrtfGitFlowWidget.dispose();
+            if (gitFlowPlusWidget != null) {
+                gitFlowPlusWidget.dispose();
             }
-            mrtfGitFlowWidget = null;
+            gitFlowPlusWidget = null;
         }
     }
 }

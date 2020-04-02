@@ -1,6 +1,6 @@
 package com.github.xiaolyuh.action;
 
-import com.github.xiaolyuh.MrtfGitFlow;
+import com.github.xiaolyuh.GitFlowPlus;
 import com.github.xiaolyuh.listener.ErrorsListener;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.utils.GitBranchUtil;
@@ -26,7 +26,7 @@ import java.util.Objects;
  * @author yuhao.wang3
  */
 public abstract class AbstractNewBranchAction extends AnAction {
-    MrtfGitFlow mrtfGitFlow = MrtfGitFlow.getInstance();
+    GitFlowPlus gitFlowPlus = GitFlowPlus.getInstance();
 
     public AbstractNewBranchAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
         super(text, description, icon);
@@ -61,14 +61,14 @@ public abstract class AbstractNewBranchAction extends AnAction {
             public void run(@NotNull ProgressIndicator indicator) {
                 final String master = ConfigUtil.getConfig(project).get().getMasterBranch();
 
-                if (mrtfGitFlow.isExistChangeFile(project)) {
+                if (gitFlowPlus.isExistChangeFile(project)) {
                     return;
                 }
 
                 ErrorsListener errorListener = new ErrorsListener(project);
                 if (isDeleteBranch()) {
                     // 删除分支
-                    GitCommandResult result = mrtfGitFlow.deleteBranch(repository, master, newBranchName, errorListener);
+                    GitCommandResult result = gitFlowPlus.deleteBranch(repository, master, newBranchName, errorListener);
                     if (result.success()) {
                         NotifyUtil.notifySuccess(myProject, "Success", String.format("%s 删除成功", newBranchName));
                     } else {
@@ -77,7 +77,7 @@ public abstract class AbstractNewBranchAction extends AnAction {
                 }
 
                 // 新建分支
-                GitCommandResult result = mrtfGitFlow.newNewBranchBaseRemoteMaster(repository, master, newBranchName, errorListener);
+                GitCommandResult result = gitFlowPlus.newNewBranchBaseRemoteMaster(repository, master, newBranchName, errorListener);
                 if (result.success()) {
                     NotifyUtil.notifySuccess(myProject, "Success", String.format("基于 origin/%s 成功创建分支 %s ", master, newBranchName));
                 } else {

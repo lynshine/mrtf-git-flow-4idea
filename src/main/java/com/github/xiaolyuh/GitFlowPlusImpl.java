@@ -3,15 +3,14 @@ package com.github.xiaolyuh;
 import com.github.xiaolyuh.utils.*;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vcs.FilePath;
 import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.vcsUtil.VcsUtil;
 import git4idea.GitUtil;
-import git4idea.GitVcs;
 import git4idea.commands.*;
-import git4idea.config.GitVersionSpecialty;
 import git4idea.merge.GitMergeCommittingConflictResolver;
 import git4idea.merge.GitMerger;
 import git4idea.repo.GitRemote;
@@ -21,14 +20,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author yuhao.wang3
  * @since 2020/3/23 9:53
  */
-public class MrtfGitFlowImpl implements MrtfGitFlow {
+public class GitFlowPlusImpl implements GitFlowPlus {
     private Git git = Git.getInstance();
 
     @Override
@@ -206,6 +209,15 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
     }
 
     @Override
+    public boolean isLock(GitRepository repository) {
+        GitRemote remote = getDefaultRemote(repository);
+        git.fetch(repository, remote, Collections.singletonList(new GitFetchPruneDetector()), new String[0]);
+        repository.update();
+
+        return isLock(repository.getProject());
+    }
+
+    @Override
     public void thirdPartyNotify(GitRepository repository) {
         try {
             String dingtalkToken = ConfigUtil.getConfig(repository.getProject()).get().getDingtalkToken();
@@ -234,20 +246,8 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
         return false;
     }
 
-    @Override
-    public void fetch(GitRepository repository) {
-        GitRemote remote = getDefaultRemote(repository);
-        git.runCommand(() -> {
-            final GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.FETCH);
-            h.setSilent(false);
-            h.setStdoutSuppressed(false);
-            h.setUrls(remote.getUrls());
-            h.addParameters(remote.getName());
-            return h;
-        });
-    }
-
-    private GitCommandResult checkTargetBranchIsExist(GitRepository repository, String targetBranch, GitLineHandlerListener errorListener) {
+    private GitCommandResult checkTargetBranchIsExist(GitRepository repository, String
+            targetBranch, GitLineHandlerListener errorListener) {
         // 判断本地是否存在分支
         if (!GitBranchUtil.getLocalBranches(repository.getProject()).contains(targetBranch)) {
             if (GitBranchUtil.getRemoteBranches(repository.getProject()).contains(targetBranch)) {
@@ -261,7 +261,8 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
         return null;
     }
 
-    private GitCommandResult checkoutNewBranch(GitRepository repository, String targetBranch, GitLineHandlerListener errorListener) {
+    private GitCommandResult checkoutNewBranch(GitRepository repository, String
+            targetBranch, GitLineHandlerListener errorListener) {
         // git checkout -b 本地分支名x origin/远程分支名x
         final GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.CHECKOUT);
         h.setSilent(false);
@@ -292,7 +293,8 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
         return git.runCommand(h);
     }
 
-    private GitCommandResult pull(GitRepository repository, @Nullable String branchName, @Nullable GitLineHandlerListener... listeners) {
+    private GitCommandResult pull(GitRepository repository, @Nullable String
+            branchName, @Nullable GitLineHandlerListener... listeners) {
         GitRemote remote = getDefaultRemote(repository);
         GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.PULL);
         h.setSilent(false);
@@ -306,7 +308,8 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
         return git.runCommand(h);
     }
 
-    private GitCommandResult push(GitRepository repository, String branchName, boolean isNewBranch, GitLineHandlerListener... listeners) {
+    private GitCommandResult push(GitRepository repository, String branchName,
+                                  boolean isNewBranch, GitLineHandlerListener... listeners) {
         GitRemote remote = getDefaultRemote(repository);
         GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.PUSH);
         h.setSilent(false);
@@ -332,7 +335,8 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
      * @param listeners  listeners
      * @return GitCommandResult
      */
-    private GitCommandResult deleteRemoteBranch(@NotNull GitRepository repository, @Nullable String branchName, @Nullable GitLineHandlerListener... listeners) {
+    private GitCommandResult deleteRemoteBranch(@NotNull GitRepository repository, @Nullable String
+            branchName, @Nullable GitLineHandlerListener... listeners) {
         GitRemote remote = getDefaultRemote(repository);
         GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.PUSH);
         h.setSilent(false);
@@ -375,6 +379,28 @@ public class MrtfGitFlowImpl implements MrtfGitFlow {
         @Override
         protected void notifyUnresolvedRemain() {
             notifyWarning("合并代码冲突", String.format("%s 分支合并到 %s分支发生代码冲突", currentBranch, targetBranch));
+        }
+    }
+
+    private class GitFetchPruneDetector extends GitLineHandlerAdapter {
+
+        private final Pattern PRUNE_PATTERN = Pattern.compile("\\s*x\\s*\\[deleted\\].*->\\s*(\\S*)");
+
+        @NotNull
+        private final Collection<String> myPrunedRefs = new ArrayList<>();
+
+        @Override
+        public void onLineAvailable(String line, Key outputType) {
+            //  x [deleted]         (none)     -> origin/frmari
+            Matcher matcher = PRUNE_PATTERN.matcher(line);
+            if (matcher.matches()) {
+                myPrunedRefs.add(matcher.group(1));
+            }
+        }
+
+        @NotNull
+        public Collection<String> getPrunedRefs() {
+            return myPrunedRefs;
         }
     }
 }
