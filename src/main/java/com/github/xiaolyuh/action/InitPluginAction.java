@@ -2,7 +2,7 @@ package com.github.xiaolyuh.action;
 
 import com.alibaba.fastjson.JSON;
 import com.github.xiaolyuh.InitOptions;
-import com.github.xiaolyuh.MrtfGitFlow;
+import com.github.xiaolyuh.GitFlowPlus;
 import com.github.xiaolyuh.listener.ErrorsListener;
 import com.github.xiaolyuh.ui.InitPluginDialog;
 import com.github.xiaolyuh.utils.ConfigUtil;
@@ -29,7 +29,7 @@ import java.util.Objects;
  */
 public class InitPluginAction extends AnAction {
 
-    private MrtfGitFlow mrtfGitFlow = MrtfGitFlow.getInstance();
+    private GitFlowPlus gitFlowPlus = GitFlowPlus.getInstance();
 
     public InitPluginAction() {
         super("初始化配置", "初始化仓库配置，如果测试分支与发布分支不存在，将基于master新建", IconLoader.getIcon("/icons/config.svg"));
@@ -56,24 +56,24 @@ public class InitPluginAction extends AnAction {
         if (initPluginDialog.isOK()) {
             final InitOptions initOptions = initPluginDialog.getOptions();
 
-            new Task.Backgroundable(project, "Init MrtfGitFlow Plugins", false) {
+            new Task.Backgroundable(project, "Init GitFlowPlus Plugins", false) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     // 校验主干分支是否存在
                     List<String> remoteBranches = GitBranchUtil.getRemoteBranches(project);
                     if (!remoteBranches.contains(initOptions.getMasterBranch())) {
-                        NotifyUtil.notifyError(myProject, "Error", String.format("远程仓库中没有 %s 分支，MrtfGitFlow初始化失败", initOptions.getMasterBranch()));
+                        NotifyUtil.notifyError(myProject, "Error", String.format("远程仓库中没有 %s 分支，GitFlowPlus初始化失败", initOptions.getMasterBranch()));
                         return;
                     }
 
                     // 校验主测试支是否存在，不存在就新建
                     if (!remoteBranches.contains(initOptions.getTestBranch())) {
                         ErrorsListener errorListener = new ErrorsListener(project);
-                        GitCommandResult result = mrtfGitFlow.newNewBranchBaseRemoteMaster(repository, initOptions.getMasterBranch(), initOptions.getTestBranch(), errorListener);
+                        GitCommandResult result = gitFlowPlus.newNewBranchBaseRemoteMaster(repository, initOptions.getMasterBranch(), initOptions.getTestBranch(), errorListener);
                         if (result.success()) {
                             NotifyUtil.notifySuccess(myProject, "Success", String.format("基于 origin/%s 成功创建分支 %s ", initOptions.getMasterBranch(), initOptions.getTestBranch()));
                         } else {
-                            NotifyUtil.notifyError(myProject, "Error", String.format("MrtfGitFlow初始化失败：%s", result.getErrorOutputAsJoinedString()));
+                            NotifyUtil.notifyError(myProject, "Error", String.format("GitFlowPlus初始化失败：%s", result.getErrorOutputAsJoinedString()));
                             return;
                         }
                     }
@@ -82,11 +82,11 @@ public class InitPluginAction extends AnAction {
                     if (!remoteBranches.contains(initOptions.getReleaseBranch())) {
                         ErrorsListener errorListener = new ErrorsListener(project);
                         // 新建分支发布分支
-                        GitCommandResult result = mrtfGitFlow.newNewBranchBaseRemoteMaster(repository, initOptions.getMasterBranch(), initOptions.getReleaseBranch(), errorListener);
+                        GitCommandResult result = gitFlowPlus.newNewBranchBaseRemoteMaster(repository, initOptions.getMasterBranch(), initOptions.getReleaseBranch(), errorListener);
                         if (result.success()) {
                             NotifyUtil.notifySuccess(myProject, "Success", String.format("基于 origin/%s 成功创建分支 %s ", initOptions.getMasterBranch(), initOptions.getReleaseBranch()));
                         } else {
-                            NotifyUtil.notifyError(myProject, "Error", String.format("MrtfGitFlow初始化失败：%s", result.getErrorOutputAsJoinedString()));
+                            NotifyUtil.notifyError(myProject, "Error", String.format("GitFlowPlus初始化失败：%s", result.getErrorOutputAsJoinedString()));
                             return;
                         }
                     }
@@ -97,9 +97,9 @@ public class InitPluginAction extends AnAction {
                     ConfigUtil.saveConfigToFile(project, configJson);
 
                     // 将配置文件加入GIT管理
-                    mrtfGitFlow.addConfigToGit(repository);
+                    gitFlowPlus.addConfigToGit(repository);
 
-                    NotifyUtil.notifySuccess(myProject, "Success", "MrtfGitFlow初始化成功");
+                    NotifyUtil.notifySuccess(myProject, "Success", "GitFlowPlus初始化成功");
 
                     //update the widget
                     myProject.getMessageBus().syncPublisher(GitRepository.GIT_REPO_CHANGE).repositoryChanged(repository);

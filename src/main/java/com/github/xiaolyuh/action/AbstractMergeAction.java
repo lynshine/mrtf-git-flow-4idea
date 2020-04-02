@@ -1,6 +1,6 @@
 package com.github.xiaolyuh.action;
 
-import com.github.xiaolyuh.MrtfGitFlow;
+import com.github.xiaolyuh.GitFlowPlus;
 import com.github.xiaolyuh.TagOptions;
 import com.github.xiaolyuh.listener.ErrorsListener;
 import com.github.xiaolyuh.utils.ConfigUtil;
@@ -33,7 +33,7 @@ import java.util.Objects;
  * @author yuhao.wang3
  */
 public abstract class AbstractMergeAction extends AnAction {
-    protected MrtfGitFlow mrtfGitFlow = MrtfGitFlow.getInstance();
+    protected GitFlowPlus gitFlowPlus = GitFlowPlus.getInstance();
 
     public AbstractMergeAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
         super(text, description, icon);
@@ -52,7 +52,7 @@ public abstract class AbstractMergeAction extends AnAction {
             return;
         }
 
-        String currentBranch = getCurrentBranch(event.getProject());
+        String currentBranch = gitFlowPlus.getCurrentBranch(event.getProject());
         String featurePrefix = ConfigUtil.getConfig(event.getProject()).get().getFeaturePrefix();
         String hotfixPrefix = ConfigUtil.getConfig(event.getProject()).get().getHotfixPrefix();
         // 已经初始化并且前缀是开发分支才显示
@@ -81,7 +81,7 @@ public abstract class AbstractMergeAction extends AnAction {
 
     void actionPerformed(@NotNull AnActionEvent event, TagOptions tagOptions) {
         final Project project = event.getProject();
-        final String currentBranch = getCurrentBranch(project);
+        final String currentBranch = gitFlowPlus.getCurrentBranch(project);
         final String targetBranch = getTargetBranch(project);
 
         final GitRepository repository = GitBranchUtil.getCurrentRepository(project);
@@ -95,27 +95,34 @@ public abstract class AbstractMergeAction extends AnAction {
             new Task.Backgroundable(project, getTaskTitle(project), false) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
-                    if (mrtfGitFlow.isExistChangeFile(project)) {
+                    if (gitFlowPlus.isExistChangeFile(project)) {
                         return;
                     }
-                    
+
                     // 加锁
-                    if (isLock() && !mrtfGitFlow.lock(repository, getCurrentBranch(project))) {
-                        String msg = mrtfGitFlow.getRemoteLastCommit(repository, getTargetBranch(project));
+                    if (isLock() && !gitFlowPlus.lock(repository, currentBranch)) {
+                        String msg = gitFlowPlus.getRemoteLastCommit(repository, getTargetBranch(project));
                         NotifyUtil.notifyError(project, "Error",
                                 String.format("发布分支已被锁定，最后一次操作：%s ;\r\n如需强行发布，请先点[发布失败]解除锁定，再点[开始发布]。", msg));
+                        return;
+                    }
+
+                    // 如果是需要解锁的操作需要先强制校验发布分支是否还处于锁定状态
+                    if (isUnLock() && !gitFlowPlus.isLock(repository)) {
+                        NotifyUtil.notifyError(project, "Error", "呀！发布分支已经解锁了，当前操作已经被阻止！");
+
                         return;
                     }
 
                     // 开始合并分支
                     if (isMerge()) {
                         ErrorsListener errorListener = new ErrorsListener(project);
-                        GitCommandResult result = mrtfGitFlow.mergeBranchAndPush(repository, currentBranch, targetBranch, tagOptions, errorListener);
+                        GitCommandResult result = gitFlowPlus.mergeBranchAndPush(repository, currentBranch, targetBranch, tagOptions, errorListener);
                         if (result.success()) {
                             NotifyUtil.notifySuccess(myProject, "Success", String.format("%s 分支已经合并到了 %s 分支，并推送到了远程仓库", currentBranch, targetBranch));
                             // 钉钉通知
                             if (isLock()) {
-                                mrtfGitFlow.thirdPartyNotify(repository);
+                                gitFlowPlus.thirdPartyNotify(repository);
                             }
                         } else {
                             NotifyUtil.notifyError(myProject, "Error", result.getErrorOutputAsJoinedString());
@@ -124,7 +131,7 @@ public abstract class AbstractMergeAction extends AnAction {
 
                     // 解锁
                     if (isUnLock()) {
-                        mrtfGitFlow.unlock(repository);
+                        gitFlowPlus.unlock(repository);
                     }
 
                     // 刷新
@@ -145,16 +152,6 @@ public abstract class AbstractMergeAction extends AnAction {
     protected abstract String getTargetBranch(Project project);
 
     /**
-     * 获取当前分支
-     *
-     * @param project project
-     * @return String
-     */
-    protected String getCurrentBranch(Project project) {
-        return mrtfGitFlow.getCurrentBranch(project);
-    }
-
-    /**
      * 获取标题
      *
      * @param project project
@@ -169,7 +166,7 @@ public abstract class AbstractMergeAction extends AnAction {
      * @return String
      */
     protected String getDialogContent(Project project) {
-        return String.format("你是否确认将 %s 分支，合并到 %s 分支？", getCurrentBranch(project), getTargetBranch(project));
+        return String.format("你是否确认将 %s 分支，合并到 %s 分支？", gitFlowPlus.getCurrentBranch(project), getTargetBranch(project));
     }
 
     /**

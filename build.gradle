@@ -25,7 +25,9 @@ intellij {
 }
 patchPluginXml {
     changeNotes """
-      <em>兼容性优化</em>"""
+      <em>插件名称修改成GitFlowPlus</em>
+      <em>发布完成和发布失败强制校验发布分支是否锁定</em>
+      """
 }
 
 tasks.withType(JavaCompile) {

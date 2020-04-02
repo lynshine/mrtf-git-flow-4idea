@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
  * @author yuhao.wang3
  * @since 2020/3/23 9:52
  */
-public interface MrtfGitFlow {
+public interface GitFlowPlus {
 
     /**
      * 获取实例
@@ -20,8 +20,8 @@ public interface MrtfGitFlow {
      * @return GbmGit
      */
     @NotNull
-    static MrtfGitFlow getInstance() {
-        return ServiceManager.getService(MrtfGitFlow.class);
+    static GitFlowPlus getInstance() {
+        return ServiceManager.getService(GitFlowPlus.class);
     }
 
     /**
@@ -130,12 +130,20 @@ public interface MrtfGitFlow {
     boolean unlock(GitRepository repository);
 
     /**
-     * 判断发布分支是否锁定
+     * 判断发布分支是否锁定(缓存)
      *
      * @param project product
-     * @return boolean
+     * @return true 表示锁定
      */
     boolean isLock(Project project);
+
+    /**
+     * 判断发布分支是否锁定(远程同步)
+     *
+     * @param repository repository
+     * @return true 表示锁定
+     */
+    boolean isLock(GitRepository repository);
 
     /**
      * 第三方通知
@@ -152,9 +160,4 @@ public interface MrtfGitFlow {
      */
     boolean isExistChangeFile(@NotNull Project project);
 
-    /**
-     * git fetch
-     * @param repository
-     */
-    void fetch(GitRepository repository);
 }

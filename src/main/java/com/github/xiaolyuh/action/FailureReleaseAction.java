@@ -5,9 +5,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 /**
  * 发布失败
@@ -24,7 +21,7 @@ public class FailureReleaseAction extends AbstractMergeAction {
     public void update(@NotNull AnActionEvent event) {
         super.update(event);
         if (event.getPresentation().isEnabled()) {
-            event.getPresentation().setEnabled(mrtfGitFlow.isLock(event.getProject()));
+            event.getPresentation().setEnabled(gitFlowPlus.isLock(event.getProject()));
         }
     }
 
