@@ -43,3 +43,4 @@ lottery-web/logs/
 rebel.xml
 *.bak
 out/
+.gradle/
