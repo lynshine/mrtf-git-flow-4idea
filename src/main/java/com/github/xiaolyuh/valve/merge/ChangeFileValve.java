@@ -1,0 +1,37 @@
+package com.github.xiaolyuh.valve.merge;
+
+import com.github.xiaolyuh.TagOptions;
+import com.github.xiaolyuh.utils.CollectionUtils;
+import com.github.xiaolyuh.utils.NotifyUtil;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vcs.changes.Change;
+import com.intellij.openapi.vcs.changes.ChangeListManager;
+import git4idea.repo.GitRepository;
+
+import java.util.Collection;
+
+/**
+ * 检查是否有未提交文件
+ *
+ * @author yuhao.wang3
+ * @since 2020/4/7 16:42
+ */
+public class ChangeFileValve extends Valve {
+    private static ChangeFileValve valve = new ChangeFileValve();
+
+    public static Valve getInstance() {
+        return valve;
+    }
+
+    @Override
+    public boolean invoke(Project project, GitRepository repository, String currentBranch, String targetBranch, TagOptions tagOptions) {
+        Collection<Change> changes = ChangeListManager.getInstance(project).getAllChanges();
+        if (CollectionUtils.isNotEmpty(changes)) {
+            StringBuffer builder = new StringBuffer();
+            changes.parallelStream().forEach(change -> builder.append(change.toString() + "\r\n"));
+            NotifyUtil.notifyError(project, "Error", String.format("当前分支存在未提交的文件:\r\n %s", builder.toString()));
+            return false;
+        }
+        return true;
+    }
+}

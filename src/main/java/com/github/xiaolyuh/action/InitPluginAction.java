@@ -1,9 +1,8 @@
 package com.github.xiaolyuh.action;
 
 import com.alibaba.fastjson.JSON;
-import com.github.xiaolyuh.InitOptions;
 import com.github.xiaolyuh.GitFlowPlus;
-import com.github.xiaolyuh.listener.ErrorsListener;
+import com.github.xiaolyuh.InitOptions;
 import com.github.xiaolyuh.ui.InitPluginDialog;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.utils.GitBranchUtil;
@@ -59,7 +58,7 @@ public class InitPluginAction extends AnAction {
             new Task.Backgroundable(project, "Init GitFlowPlus Plugins", false) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
-                    NotifyUtil.notifyGitCommand(event.getProject(),"===================================================================================");
+                    NotifyUtil.notifyGitCommand(event.getProject(), "===================================================================================");
 
                     // 校验主干分支是否存在
                     List<String> remoteBranches = GitBranchUtil.getRemoteBranches(project);
@@ -70,8 +69,7 @@ public class InitPluginAction extends AnAction {
 
                     // 校验主测试支是否存在，不存在就新建
                     if (!remoteBranches.contains(initOptions.getTestBranch())) {
-                        ErrorsListener errorListener = new ErrorsListener(project);
-                        GitCommandResult result = gitFlowPlus.newNewBranchBaseRemoteMaster(repository, initOptions.getMasterBranch(), initOptions.getTestBranch(), errorListener);
+                        GitCommandResult result = gitFlowPlus.newNewBranchBaseRemoteMaster(repository, initOptions.getMasterBranch(), initOptions.getTestBranch());
                         if (result.success()) {
                             NotifyUtil.notifySuccess(myProject, "Success", String.format("基于 origin/%s 成功创建分支 %s ", initOptions.getMasterBranch(), initOptions.getTestBranch()));
                         } else {
@@ -82,9 +80,8 @@ public class InitPluginAction extends AnAction {
 
                     // 校验主发布支是否存在，不存在就新建
                     if (!remoteBranches.contains(initOptions.getReleaseBranch())) {
-                        ErrorsListener errorListener = new ErrorsListener(project);
                         // 新建分支发布分支
-                        GitCommandResult result = gitFlowPlus.newNewBranchBaseRemoteMaster(repository, initOptions.getMasterBranch(), initOptions.getReleaseBranch(), errorListener);
+                        GitCommandResult result = gitFlowPlus.newNewBranchBaseRemoteMaster(repository, initOptions.getMasterBranch(), initOptions.getReleaseBranch());
                         if (result.success()) {
                             NotifyUtil.notifySuccess(myProject, "Success", String.format("基于 origin/%s 成功创建分支 %s ", initOptions.getMasterBranch(), initOptions.getReleaseBranch()));
                         } else {

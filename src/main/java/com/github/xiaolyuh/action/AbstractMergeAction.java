@@ -2,11 +2,11 @@ package com.github.xiaolyuh.action;
 
 import com.github.xiaolyuh.GitFlowPlus;
 import com.github.xiaolyuh.TagOptions;
-import com.github.xiaolyuh.listener.ErrorsListener;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.utils.GitBranchUtil;
 import com.github.xiaolyuh.utils.NotifyUtil;
 import com.github.xiaolyuh.utils.StringUtils;
+import com.github.xiaolyuh.valve.merge.Valve;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -18,13 +18,13 @@ import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import git4idea.commands.GitCommandResult;
 import git4idea.repo.GitRepository;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -95,55 +95,12 @@ public abstract class AbstractMergeAction extends AnAction {
             new Task.Backgroundable(project, getTaskTitle(project), false) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
-                    if (gitFlowPlus.isExistChangeFile(project)) {
-                        return;
-                    }
-
                     NotifyUtil.notifyGitCommand(event.getProject(), "===================================================================================");
-                    // 加锁
-                    if (isLock() && !gitFlowPlus.lock(repository, currentBranch)) {
-                        String msg = gitFlowPlus.getRemoteLastCommit(repository, getTargetBranch(project));
-                        NotifyUtil.notifyError(project, "Error",
-                                String.format("发布分支已被锁定，最后一次操作：%s ;\r\n如需强行发布，请先点[发布失败]解除锁定，再点[开始发布]。", msg));
-                        return;
-                    }
-
-                    // 如果是需要解锁的操作需要先强制校验发布分支是否还处于锁定状态
-                    if (isUnLock()) {
-                        String release = ConfigUtil.getConfig(project).get().getReleaseBranch();
-                        String lastCommitMsg = gitFlowPlus.getRemoteLastCommit(repository, release);
-                        String email = gitFlowPlus.getUserEmail(repository);
-                        if (!lastCommitMsg.contains(email)) {
-                            NotifyUtil.notifyError(project, "Error",
-                                    String.format("发布分支已被锁定，最后一次操作：%s ;\r\n如需强行发布，请先找对相应人点[发布失败]。", lastCommitMsg));
+                    List<Valve> valves = getValves();
+                    for (Valve valve : valves) {
+                        if (!valve.invoke(project, repository, currentBranch, targetBranch, tagOptions)) {
                             return;
                         }
-
-                        if (!gitFlowPlus.isLock(repository)) {
-                            NotifyUtil.notifyError(project, "Error", "呀！发布分支已经解锁了，当前操作已经被阻止！");
-                            return;
-                        }
-
-                    }
-
-                    // 开始合并分支
-                    if (isMerge()) {
-                        ErrorsListener errorListener = new ErrorsListener(project);
-                        GitCommandResult result = gitFlowPlus.mergeBranchAndPush(repository, currentBranch, targetBranch, tagOptions, errorListener);
-                        if (result.success()) {
-                            NotifyUtil.notifySuccess(myProject, "Success", String.format("%s 分支已经合并到了 %s 分支，并推送到了远程仓库", currentBranch, targetBranch));
-                            // 钉钉通知
-                            if (isLock()) {
-                                gitFlowPlus.thirdPartyNotify(repository);
-                            }
-                        } else {
-                            NotifyUtil.notifyError(myProject, "Error", result.getErrorOutputAsJoinedString());
-                        }
-                    }
-
-                    // 解锁
-                    if (isUnLock()) {
-                        gitFlowPlus.unlock(repository);
                     }
 
                     // 刷新
@@ -190,29 +147,9 @@ public abstract class AbstractMergeAction extends AnAction {
     protected abstract String getTaskTitle(Project project);
 
     /**
-     * 是否需要加锁
+     * 获取需要执行的阀门
      *
      * @return boolean
      */
-    protected boolean isLock() {
-        return false;
-    }
-
-    /**
-     * 是否需要获解锁
-     *
-     * @return boolean
-     */
-    protected boolean isUnLock() {
-        return false;
-    }
-
-    /**
-     * 是否需要合并分支
-     *
-     * @return boolean
-     */
-    protected boolean isMerge() {
-        return true;
-    }
+    protected abstract List<Valve> getValves();
 }

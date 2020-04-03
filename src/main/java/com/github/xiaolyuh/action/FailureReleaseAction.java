@@ -1,10 +1,17 @@
 package com.github.xiaolyuh.action;
 
 import com.github.xiaolyuh.utils.ConfigUtil;
+import com.github.xiaolyuh.valve.merge.ChangeFileValve;
+import com.github.xiaolyuh.valve.merge.UnLockCheckValve;
+import com.github.xiaolyuh.valve.merge.UnLockValve;
+import com.github.xiaolyuh.valve.merge.Valve;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 发布失败
@@ -49,12 +56,11 @@ public class FailureReleaseAction extends AbstractMergeAction {
     }
 
     @Override
-    protected boolean isUnLock() {
-        return true;
-    }
-
-    @Override
-    protected boolean isMerge() {
-        return false;
+    protected List<Valve> getValves() {
+        List<Valve> valves = new ArrayList<>();
+        valves.add(ChangeFileValve.getInstance());
+        valves.add(UnLockCheckValve.getInstance());
+        valves.add(UnLockValve.getInstance());
+        return valves;
     }
 }

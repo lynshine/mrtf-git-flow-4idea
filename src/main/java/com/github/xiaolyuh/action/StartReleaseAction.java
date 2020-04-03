@@ -2,8 +2,12 @@ package com.github.xiaolyuh.action;
 
 import com.github.xiaolyuh.GitFlowPlus;
 import com.github.xiaolyuh.utils.ConfigUtil;
+import com.github.xiaolyuh.valve.merge.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 开始发布
@@ -33,7 +37,12 @@ public class StartReleaseAction extends AbstractMergeAction {
     }
 
     @Override
-    protected boolean isLock() {
-        return true;
+    protected List<Valve> getValves() {
+        List<Valve> valves = new ArrayList<>();
+        valves.add(ChangeFileValve.getInstance());
+        valves.add(LockValve.getInstance());
+        valves.add(MergeValve.getInstance());
+        valves.add(ReleaseLockNotifyValve.getInstance());
+        return valves;
     }
 }
