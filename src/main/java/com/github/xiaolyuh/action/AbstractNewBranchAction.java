@@ -65,6 +65,7 @@ public abstract class AbstractNewBranchAction extends AnAction {
                     return;
                 }
 
+                NotifyUtil.notifyGitCommand(event.getProject(),"===================================================================================");
                 ErrorsListener errorListener = new ErrorsListener(project);
                 if (isDeleteBranch()) {
                     // 删除分支

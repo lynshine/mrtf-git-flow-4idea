@@ -2,6 +2,9 @@ package com.github.xiaolyuh;
 
 import com.github.xiaolyuh.utils.*;
 import com.google.common.collect.Lists;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vcs.FilePath;
@@ -11,19 +14,19 @@ import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.vcsUtil.VcsUtil;
 import git4idea.GitUtil;
 import git4idea.commands.*;
+import git4idea.i18n.GitBundle;
 import git4idea.merge.GitMergeCommittingConflictResolver;
 import git4idea.merge.GitMerger;
 import git4idea.repo.GitRemote;
 import git4idea.repo.GitRepository;
 import git4idea.util.GitFileUtils;
+import git4idea.util.GitUIUtil;
+import git4idea.util.StringScanner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,24 +50,12 @@ public class GitFlowPlusImpl implements GitFlowPlus {
 
     @Override
     public GitCommandResult newNewBranchBaseRemoteMaster(@NotNull GitRepository repository, @Nullable String master, @NotNull String newBranchName, @Nullable GitLineHandlerListener... listeners) {
-        //git fetch origin 远程分支名x:本地分支名x
-        GitRemote remote = getDefaultRemote(repository);
-        GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.FETCH);
-        h.setSilent(false);
-        h.setStdoutSuppressed(false);
-        h.setUrls(remote.getUrls());
-        h.addParameters("origin");
-        // 远程分支名x:本地分支名x
-        h.addParameters(master + ":" + newBranchName);
-        h.addParameters("-f");
+        newBranch(repository, master, newBranchName, listeners);
 
-        for (GitLineHandlerListener listener : listeners) {
-            h.addLineListener(listener);
-        }
-
-        git.runCommand(h);
         // 切换分支
+        NotifyUtil.notifyGitCommand(repository.getProject(), String.format("git -c core.quotepath=false -c log.showSignature=false checkout %s --force", newBranchName));
         git.checkout(repository, newBranchName, null, true, false);
+
         // 推送分支
         return push(repository, newBranchName, true, listeners);
     }
@@ -84,9 +75,13 @@ public class GitFlowPlusImpl implements GitFlowPlus {
                                          @Nullable String branchName,
                                          @Nullable GitLineHandlerListener listener) {
 
+        NotifyUtil.notifyGitCommand(repository.getProject(), String.format("git -c core.quotepath=false -c log.showSignature=false checkout %s --force", master));
         git.checkout(repository, master, null, true, false);
+
         deleteRemoteBranch(repository, branchName, listener);
+
         // 删除本地分支
+        NotifyUtil.notifyGitCommand(repository.getProject(), String.format("git -c core.quotepath=false -c log.showSignature=false branch -D %s", branchName));
         return git.branchDelete(repository, branchName, true, listener);
     }
 
@@ -112,7 +107,7 @@ public class GitFlowPlusImpl implements GitFlowPlus {
         for (GitLineHandlerListener listener : listeners) {
             h.addLineListener(listener);
         }
-
+        NotifyUtil.notifyGitCommand(repository.getProject(), h.printableCommandLine());
         GitCommandResult result = git.runCommand(h);
         String msg = result.getOutputAsJoinedString();
         msg = msg.replaceFirst("Author:", "\r\n  操作人: ");
@@ -124,23 +119,34 @@ public class GitFlowPlusImpl implements GitFlowPlus {
     @Override
     public GitCommandResult mergeBranchAndPush(GitRepository repository, String currentBranch, String targetBranch,
                                                TagOptions tagOptions, GitLineHandlerListener errorListener) {
+        String releaseBranch = ReadAction.compute(() -> ConfigUtil.getConfig(repository.getProject()).get().getReleaseBranch());
         // 判断目标分支是否存在
         GitCommandResult result = checkTargetBranchIsExist(repository, targetBranch, errorListener);
         if (Objects.nonNull(result) && !result.success()) {
             return result;
         }
 
-        // 切换到目标分支
-        git.checkout(repository, targetBranch, null, true, false);
-        // pull最新代码
-        result = pull(repository, targetBranch, errorListener);
+        // 发布完成打拉取release最新代码
+        if (Objects.nonNull(tagOptions)) {
+            result = checkoutTargetBranchAndPull(repository, releaseBranch, errorListener);
+            if (!result.success()) {
+                return result;
+            }
+        }
+
+        // 切换到目标分支, pull最新代码
+        result = checkoutTargetBranchAndPull(repository, targetBranch, errorListener);
         if (!result.success()) {
             return result;
         }
 
         // 合并代码
         GitSimpleEventDetector mergeConflict = new GitSimpleEventDetector(GitSimpleEventDetector.Event.MERGE_CONFLICT);
-        result = git.merge(repository, currentBranch, Lists.newArrayList(), errorListener, mergeConflict);
+        String branchToMerge = Objects.nonNull(tagOptions) ? releaseBranch : currentBranch;
+        NotifyUtil.notifyGitCommand(repository.getProject(),
+                String.format("git -c core.quotepath=false -c log.showSignature=false merge %s ['%s' merge into '%s']", branchToMerge, branchToMerge, repository.getCurrentBranch()));
+
+        result = git.merge(repository, branchToMerge, Lists.newArrayList(), errorListener, mergeConflict);
 
         boolean allConflictsResolved = true;
         if (mergeConflict.hasHappened()) {
@@ -152,7 +158,7 @@ public class GitFlowPlusImpl implements GitFlowPlus {
             return result;
         }
 
-        // 打tag
+        // 发布完成打tag
         if (Objects.nonNull(tagOptions)) {
             result = createNewTag(repository, tagOptions.getTagName(), tagOptions.getMessage(), errorListener);
             if (!result.success()) {
@@ -167,6 +173,7 @@ public class GitFlowPlusImpl implements GitFlowPlus {
         }
 
         // 切换到当前分支
+        NotifyUtil.notifyGitCommand(repository.getProject(), String.format("git -c core.quotepath=false -c log.showSignature=false checkout %s --force", currentBranch));
         return git.checkout(repository, currentBranch, null, true, false);
     }
 
@@ -182,6 +189,8 @@ public class GitFlowPlusImpl implements GitFlowPlus {
         for (GitLineHandlerListener listener : listeners) {
             h.addLineListener(listener);
         }
+
+        NotifyUtil.notifyGitCommand(repository.getProject(), h.printableCommandLine());
         GitCommandResult result = git.runCommand(h);
 
         if (result.success() && isNewBranch(result)) {
@@ -211,6 +220,7 @@ public class GitFlowPlusImpl implements GitFlowPlus {
     @Override
     public boolean isLock(GitRepository repository) {
         GitRemote remote = getDefaultRemote(repository);
+        NotifyUtil.notifyGitCommand(repository.getProject(), String.format("git -c core.quotepath=false -c log.showSignature=false fetch origin"));
         git.fetch(repository, remote, Collections.singletonList(new GitFetchPruneDetector()), new String[0]);
         repository.update();
 
@@ -246,6 +256,54 @@ public class GitFlowPlusImpl implements GitFlowPlus {
         return false;
     }
 
+
+    @Override
+    public String getUserEmail(GitRepository repository) {
+        try {
+            GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.CONFIG);
+            h.setSilent(true);
+            h.addParameters("--null", "--get", "user.email");
+            NotifyUtil.notifyGitCommand(repository.getProject(), h.printableCommandLine());
+            GitCommandResult result = Git.getInstance().runCommand(h);
+            String output = result.getOutputOrThrow(1);
+            int pos = output.indexOf('\u0000');
+            if (result.getExitCode() != 0 || pos == -1) {
+                return "";
+            }
+            return output.substring(0, pos);
+        } catch (VcsException e) {
+            return "";
+        }
+    }
+
+    @Override
+    public boolean isExistTag(GitRepository repository, String tagName) {
+        Set<String> myExistingTags = new HashSet<>();
+        GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.TAG);
+        h.setSilent(true);
+        NotifyUtil.notifyGitCommand(repository.getProject(), h.printableCommandLine());
+
+        GitCommandResult result = ProgressManager.getInstance()
+                .runProcessWithProgressSynchronously(() -> Git.getInstance().runCommand(h),
+                        GitBundle.getString("tag.getting.existing.tags"),
+                        false,
+                        repository.getProject());
+        if (!result.success()) {
+            GitUIUtil.showOperationError(repository.getProject(), GitBundle.getString("tag.getting.existing.tags"), result.getErrorOutputAsJoinedString());
+            throw new ProcessCanceledException();
+        }
+        for (StringScanner s = new StringScanner(result.getOutputAsJoinedString()); s.hasMoreData(); ) {
+            String line = s.line();
+            if (line.length() == 0) {
+                continue;
+            }
+            myExistingTags.add(line);
+        }
+
+        return myExistingTags.contains(tagName);
+    }
+
+
     private GitCommandResult checkTargetBranchIsExist(GitRepository repository, String
             targetBranch, GitLineHandlerListener errorListener) {
         // 判断本地是否存在分支
@@ -273,6 +331,7 @@ public class GitFlowPlusImpl implements GitFlowPlus {
         if (errorListener != null) {
             h.addLineListener(errorListener);
         }
+        NotifyUtil.notifyGitCommand(repository.getProject(), h.printableCommandLine());
         return git.runCommand(h);
     }
 
@@ -290,6 +349,7 @@ public class GitFlowPlusImpl implements GitFlowPlus {
         for (GitLineHandlerListener listener : listeners) {
             h.addLineListener(listener);
         }
+        NotifyUtil.notifyGitCommand(repository.getProject(), h.printableCommandLine());
         return git.runCommand(h);
     }
 
@@ -305,6 +365,8 @@ public class GitFlowPlusImpl implements GitFlowPlus {
         for (GitLineHandlerListener listener : listeners) {
             h.addLineListener(listener);
         }
+
+        NotifyUtil.notifyGitCommand(repository.getProject(), h.printableCommandLine());
         return git.runCommand(h);
     }
 
@@ -324,6 +386,7 @@ public class GitFlowPlusImpl implements GitFlowPlus {
         for (GitLineHandlerListener listener : listeners) {
             h.addLineListener(listener);
         }
+        NotifyUtil.notifyGitCommand(repository.getProject(), h.printableCommandLine());
         return git.runCommand(h);
     }
 
@@ -349,7 +412,27 @@ public class GitFlowPlusImpl implements GitFlowPlus {
         for (GitLineHandlerListener listener : listeners) {
             h.addLineListener(listener);
         }
+        NotifyUtil.notifyGitCommand(repository.getProject(), h.printableCommandLine());
+        return git.runCommand(h);
+    }
 
+    private GitCommandResult newBranch(GitRepository repository, String master, String newBranchName, GitLineHandlerListener... listeners) {
+        //git fetch origin 远程分支名x:本地分支名x
+        GitRemote remote = getDefaultRemote(repository);
+        GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.FETCH);
+        h.setSilent(false);
+        h.setStdoutSuppressed(false);
+        h.setUrls(remote.getUrls());
+        h.addParameters("origin");
+        // 远程分支名x:本地分支名x
+        h.addParameters(master + ":" + newBranchName);
+        h.addParameters("-f");
+
+        for (GitLineHandlerListener listener : listeners) {
+            h.addLineListener(listener);
+        }
+
+        NotifyUtil.notifyGitCommand(repository.getProject(), h.printableCommandLine());
         return git.runCommand(h);
     }
 
@@ -363,6 +446,15 @@ public class GitFlowPlusImpl implements GitFlowPlus {
 
     private boolean isNewBranch(GitCommandResult result) {
         return result.getOutputAsJoinedString().contains("new branch") || result.getErrorOutputAsJoinedString().contains("new branch");
+    }
+
+    private GitCommandResult checkoutTargetBranchAndPull(GitRepository repository, String targetBranch, GitLineHandlerListener errorListener) {
+        // 切换到目标分支
+        NotifyUtil.notifyGitCommand(repository.getProject(), String.format("git -c core.quotepath=false -c log.showSignature=false checkout %s --force", targetBranch));
+        git.checkout(repository, targetBranch, null, true, false);
+
+        // pull最新代码
+        return pull(repository, targetBranch, errorListener);
     }
 
     private class MyMergeConflictResolver extends GitMergeCommittingConflictResolver {

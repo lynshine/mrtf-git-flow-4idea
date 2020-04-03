@@ -99,6 +99,7 @@ public abstract class AbstractMergeAction extends AnAction {
                         return;
                     }
 
+                    NotifyUtil.notifyGitCommand(event.getProject(), "===================================================================================");
                     // 加锁
                     if (isLock() && !gitFlowPlus.lock(repository, currentBranch)) {
                         String msg = gitFlowPlus.getRemoteLastCommit(repository, getTargetBranch(project));
@@ -108,10 +109,21 @@ public abstract class AbstractMergeAction extends AnAction {
                     }
 
                     // 如果是需要解锁的操作需要先强制校验发布分支是否还处于锁定状态
-                    if (isUnLock() && !gitFlowPlus.isLock(repository)) {
-                        NotifyUtil.notifyError(project, "Error", "呀！发布分支已经解锁了，当前操作已经被阻止！");
+                    if (isUnLock()) {
+                        String release = ConfigUtil.getConfig(project).get().getReleaseBranch();
+                        String lastCommitMsg = gitFlowPlus.getRemoteLastCommit(repository, release);
+                        String email = gitFlowPlus.getUserEmail(repository);
+                        if (!lastCommitMsg.contains(email)) {
+                            NotifyUtil.notifyError(project, "Error",
+                                    String.format("发布分支已被锁定，最后一次操作：%s ;\r\n如需强行发布，请先找对相应人点[发布失败]。", lastCommitMsg));
+                            return;
+                        }
 
-                        return;
+                        if (!gitFlowPlus.isLock(repository)) {
+                            NotifyUtil.notifyError(project, "Error", "呀！发布分支已经解锁了，当前操作已经被阻止！");
+                            return;
+                        }
+
                     }
 
                     // 开始合并分支

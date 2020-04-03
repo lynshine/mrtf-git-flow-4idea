@@ -160,4 +160,20 @@ public interface GitFlowPlus {
      */
     boolean isExistChangeFile(@NotNull Project project);
 
+    /**
+     * 获取当前Git账号的邮箱
+     *
+     * @param repository
+     * @return
+     */
+    String getUserEmail(GitRepository repository);
+
+    /**
+     * 判断tag是否存在
+     *
+     * @param repository
+     * @param tagName
+     * @return
+     */
+    boolean isExistTag(GitRepository repository, String tagName);
 }

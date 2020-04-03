@@ -13,11 +13,14 @@ import com.intellij.openapi.wm.ToolWindowId;
  */
 public class NotifyUtil {
     private static final NotificationGroup TOOLWINDOW_NOTIFICATION = NotificationGroup.toolWindowGroup(
-            "Gitflow Errors", ToolWindowId.VCS, true);
+            "GitflowPlus Errors", ToolWindowId.VCS, true);
     private static final NotificationGroup STICKY_NOTIFICATION = new NotificationGroup(
-            "Gitflow Errors", NotificationDisplayType.STICKY_BALLOON, true);
+            "GitflowPlus Errors", NotificationDisplayType.STICKY_BALLOON, true);
     private static final NotificationGroup BALLOON_NOTIFICATION = new NotificationGroup(
-            "Gitflow Notifications", NotificationDisplayType.BALLOON, true);
+            "GitflowPlus Notifications", NotificationDisplayType.BALLOON, true);
+
+    private static final NotificationGroup NONE = new NotificationGroup(
+            "GitflowPlus Notifications", NotificationDisplayType.NONE, true);
 
     public static void notifySuccess(Project project, String title, String message) {
         notify(NotificationType.INFORMATION, BALLOON_NOTIFICATION, project, title, message);
@@ -31,8 +34,8 @@ public class NotifyUtil {
         notify(NotificationType.ERROR, TOOLWINDOW_NOTIFICATION, project, title, message);
     }
 
-    public static void notifyError(Project project, String title, Exception exception) {
-        notify(NotificationType.ERROR, STICKY_NOTIFICATION, project, title, exception.getMessage());
+    public static void notifyGitCommand(Project project, String command) {
+        notify(NotificationType.WARNING, NONE, project, "Git 命令", command);
     }
 
     private static void notify(NotificationType type, NotificationGroup group, Project project, String title, String message) {

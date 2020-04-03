@@ -59,6 +59,8 @@ public class InitPluginAction extends AnAction {
             new Task.Backgroundable(project, "Init GitFlowPlus Plugins", false) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
+                    NotifyUtil.notifyGitCommand(event.getProject(),"===================================================================================");
+
                     // 校验主干分支是否存在
                     List<String> remoteBranches = GitBranchUtil.getRemoteBranches(project);
                     if (!remoteBranches.contains(initOptions.getMasterBranch())) {
