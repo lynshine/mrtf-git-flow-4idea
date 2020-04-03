@@ -25,15 +25,16 @@ intellij {
 }
 patchPluginXml {
     changeNotes """
-        <em>1.0.1<em>
-        <em>1. 新增GIT 命令输出<em>
-        <em>2. 发布完成合并release到master<em>
-        <em>3. 发布完成权限校验<em>
-        <em>4. Tag 名称校验<em>
+        <em>1.0.1<em></br>
+        <em>1. 新增GIT 命令输出<em></br>
+        <em>2. 发布完成合并release到master<em></br>
+        <em>3. 发布完成权限校验<em></br>
+        <em>4. Tag 名称校验<em></br>
         
-        <em>1.0.0<em>
-        <em>插件名称修改成GitFlowPlus</em>
-        <em>发布完成和发布失败强制校验发布分支是否锁定</em>
+        </br>
+        <em>1.0.0<em></br>
+        <em>插件名称修改成GitFlowPlus</em></br>
+        <em>发布完成和发布失败强制校验发布分支是否锁定</em></br>
       """
 }
 
