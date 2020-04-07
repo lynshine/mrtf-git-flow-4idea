@@ -1,7 +1,10 @@
 package com.github.xiaolyuh.action;
 
 import com.github.xiaolyuh.GitNewBranchNameValidator;
+import com.github.xiaolyuh.i18n.I18n;
+import com.github.xiaolyuh.i18n.I18nKey;
 import com.github.xiaolyuh.utils.ConfigUtil;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
@@ -15,7 +18,12 @@ import git4idea.GitUtil;
 public class NewFeatureAction extends AbstractNewBranchAction {
 
     public NewFeatureAction() {
-        super("新建开发分支","新建开发分支，并推送到远程仓库", IconLoader.getIcon("/icons/feature.svg"));
+        super("新建开发分支", "新建开发分支，并推送到远程仓库", IconLoader.getIcon("/icons/feature.svg"));
+    }
+
+    @Override
+    protected void setEnabledAndText(AnActionEvent event) {
+        event.getPresentation().setText(I18n.getContent(I18nKey.NEW_FEATURE_ACTION$TEXT));
     }
 
     @Override
@@ -25,13 +33,14 @@ public class NewFeatureAction extends AbstractNewBranchAction {
 
     @Override
     public String getInputString(Project project) {
-        return Messages.showInputDialog(project, "请输入开发分支名称", "新建开发分支", null, "",
+        return Messages.showInputDialog(project, I18n.getContent(I18nKey.NEW_FEATURE_ACTION$DIALOG_MESSAGE),
+                I18n.getContent(I18nKey.NEW_FEATURE_ACTION$DIALOG_TITLE), null, "",
                 GitNewBranchNameValidator.newInstance(GitUtil.getRepositoryManager(project).getRepositories(), getPrefix(project)));
     }
 
     @Override
     public String getTitle(String branchName) {
-        return "正在创建开发分支: " + branchName;
+        return I18n.getContent(I18nKey.NEW_FEATURE_ACTION$TITLE) + ": " + branchName;
     }
 
     @Override

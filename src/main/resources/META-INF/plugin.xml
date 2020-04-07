@@ -13,22 +13,26 @@
       2. New development branch and repair branch based on origin / master; <br>
       3. Rebuild test branch and release branch based on origin / master; <br>
       4. After the development is completed, merge the development branch into the test branch; <br>
-      5. After the test is completed, merge the development branch into the release branch and lock the release branch; <br>
-      6. After the release is complete, merge the release branch into the origin / master branch; <br>
-      7. Publishing failure will unlock the release branch; <br>
+      4. After the test is completed, the development branch is merged into the release branch, and the release branch is locked; <br>
+      5. After the release is completed, merge the release branch into the origin / master branch; <br>
+      6. Failure to release will unlock the release branch; <br>
+      7. Only those who lock the release branch can click [release complete] and [release failed]; <br>
+      8. All executed git commands can be viewed in "Event Log"; <br>
 
         <br>
     这是一个适用于<a href="https://xiaolyuh.blog.csdn.net/article/details/105180250">mrtf git flow</a> (master,release,test,feature) 流程的分支管理插件 <a href="https://github.com/xiaolyuh/mrtf-git-flow-4idea">使用指南</a>。<br>
 
      <br>
     主要功能如下：<br>
-     1. 插件配置文件可以加入GIT版本管理，在团队内部共享；<br>
-     2. 基于origin/master新建开发分支和修复分支；<br>
-     3. 基于origin/master重建测试分支和发布分支；<br>
-     4. 开发完成后将开发分支合并到测试分支；<br>
-     5. 测试完成后将开发分支合并到发布分支，并锁定发布分支；<br>
-     6. 发布完成后将发布分支合并到origin/master分支；<br>
-     7. 发布失败将解除发布分支的锁定；<br>
+     1. 插件配置文件可以加入GIT版本管理，在团队内部共享； <br>
+     2. 基于origin/master新建开发分支和修复分支； <br>
+     3. 基于origin/master重建测试分支和发布分支； <br>
+     4. 开发完成后将开发分支合并到测试分支； <br>
+     4. 测试完成后将开发分支合并到发布分支，并锁定发布分支； <br>
+     5. 发布完成后将发布分支合并到origin/master分支； <br>
+     6. 发布失败将解除发布分支的锁定； <br>
+     7. 只有锁定发布分支的人才能点[发布完成]和[发布失败]； <br>
+     8. 所有执行的git命令都可以在"Event Log"查看； <br>
     ]]>
     </description>
 
@@ -72,7 +76,7 @@
                     text="新建修复分支" description="新建修复分支，并推送到远程仓库"/>
             <separator/>
 
-            <group id="GitFlowPlus.RebuildBranch" popup="true" text="重建分支">
+            <group id="GitFlowPlus.RebuildBranch" popup="true" text="重建分支" class="com.github.xiaolyuh.action.RebuildActionGroup">
                 <action id="GitFlowPlus.RebuildTestAction" class="com.github.xiaolyuh.action.RebuildTestAction"
                         text="重建测试分支" description="重建测试分支，并推送到远程仓库，原来的分支将被删除" icon="/icons/test.svg"/>
                 <action id="GitFlowPlus.RebuildReleaseAction" class="com.github.xiaolyuh.action.RebuildReleaseAction"
@@ -81,7 +85,7 @@
             <separator/>
 
             <!--解决冲突-->
-            <action id="GitFlowPlus.ResolveConflicts" class="git4idea.actions.GitResolveConflictsAction"
+            <action id="GitFlowPlus.ResolveConflicts" class="com.github.xiaolyuh.action.GitResolveConflictsAction"
                     text="解决冲突" description="解决冲突"/>
             <separator/>
 

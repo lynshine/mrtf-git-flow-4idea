@@ -2,6 +2,8 @@ package com.github.xiaolyuh.action;
 
 import com.github.xiaolyuh.GitFlowPlus;
 import com.github.xiaolyuh.TagOptions;
+import com.github.xiaolyuh.i18n.I18n;
+import com.github.xiaolyuh.i18n.I18nKey;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.utils.GitBranchUtil;
 import com.github.xiaolyuh.utils.NotifyUtil;
@@ -42,6 +44,7 @@ public abstract class AbstractMergeAction extends AnAction {
     @Override
     public void update(@NotNull AnActionEvent event) {
         super.update(event);
+        I18n.init(event.getProject());
         if (Objects.isNull(event.getProject())) {
             event.getPresentation().setEnabled(false);
             return;
@@ -58,7 +61,15 @@ public abstract class AbstractMergeAction extends AnAction {
         // 已经初始化并且前缀是开发分支才显示
         boolean isDevBranch = StringUtils.startsWith(currentBranch, featurePrefix) || StringUtils.startsWith(currentBranch, hotfixPrefix);
         event.getPresentation().setEnabled(isDevBranch && !isConflicts(event.getProject()));
+
+        setEnabledAndText(event);
     }
+
+    /**
+     * 设置是否启用和Text
+     * @param event
+     */
+    protected abstract void setEnabledAndText(AnActionEvent event);
 
     /**
      * 代码是否存在冲突
@@ -90,7 +101,7 @@ public abstract class AbstractMergeAction extends AnAction {
         }
 
         int flag = Messages.showOkCancelDialog(project, getDialogContent(project),
-                getDialogTitle(project), "确认", "取消", IconLoader.getIcon("/icons/warning.svg"));
+                getDialogTitle(project), I18n.getContent(I18nKey.OK_TEXT), I18n.getContent(I18nKey.CANCEL_TEXT), IconLoader.getIcon("/icons/warning.svg"));
         if (flag == 0) {
             new Task.Backgroundable(project, getTaskTitle(project), false) {
                 @Override

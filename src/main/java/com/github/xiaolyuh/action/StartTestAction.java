@@ -1,10 +1,13 @@
 package com.github.xiaolyuh.action;
 
 import com.github.xiaolyuh.GitFlowPlus;
+import com.github.xiaolyuh.i18n.I18n;
+import com.github.xiaolyuh.i18n.I18nKey;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.valve.merge.ChangeFileValve;
 import com.github.xiaolyuh.valve.merge.MergeValve;
 import com.github.xiaolyuh.valve.merge.Valve;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 
@@ -23,18 +26,23 @@ public class StartTestAction extends AbstractMergeAction {
     }
 
     @Override
+    protected void setEnabledAndText(AnActionEvent event) {
+        event.getPresentation().setText(I18n.getContent(I18nKey.START_TEST_ACTION$TEXT));
+    }
+
+    @Override
     protected String getTargetBranch(Project project) {
         return ConfigUtil.getConfig(project).get().getTestBranch();
     }
 
     @Override
     protected String getDialogTitle(Project project) {
-        return "提测";
+        return I18nKey.START_TEST_ACTION$DIALOG_TITLE;
     }
 
     @Override
     protected String getTaskTitle(Project project) {
-        return String.format("将 %s 分支，合并到 %s 分支", GitFlowPlus.getInstance().getCurrentBranch(project), getTargetBranch(project));
+        return String.format(I18n.getContent(I18nKey.MERGE_BRANCH_TASK_TITLE), GitFlowPlus.getInstance().getCurrentBranch(project), getTargetBranch(project));
     }
 
     @Override

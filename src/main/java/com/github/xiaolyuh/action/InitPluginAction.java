@@ -3,6 +3,8 @@ package com.github.xiaolyuh.action;
 import com.alibaba.fastjson.JSON;
 import com.github.xiaolyuh.GitFlowPlus;
 import com.github.xiaolyuh.InitOptions;
+import com.github.xiaolyuh.i18n.I18n;
+import com.github.xiaolyuh.i18n.I18nKey;
 import com.github.xiaolyuh.ui.InitPluginDialog;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.utils.GitBranchUtil;
@@ -37,8 +39,11 @@ public class InitPluginAction extends AnAction {
     @Override
     public void update(@NotNull AnActionEvent event) {
         super.update(event);
+        I18n.init(event.getProject());
         event.getPresentation().setEnabledAndVisible(GitBranchUtil.isGitProject(event.getProject()));
-        event.getPresentation().setText(ConfigUtil.isInit(event.getProject()) ? "更新配置" : "初始配置");
+
+        event.getPresentation().setText(ConfigUtil.isInit(event.getProject())
+                ? I18n.getContent(I18nKey.INIT_PLUGIN_ACTION$TEXT_UPDATE) : I18n.getContent(I18nKey.INIT_PLUGIN_ACTION$TEXT_INIT));
     }
 
     @Override
@@ -63,7 +68,7 @@ public class InitPluginAction extends AnAction {
                     // 校验主干分支是否存在
                     List<String> remoteBranches = GitBranchUtil.getRemoteBranches(project);
                     if (!remoteBranches.contains(initOptions.getMasterBranch())) {
-                        NotifyUtil.notifyError(myProject, "Error", String.format("远程仓库中没有 %s 分支，GitFlowPlus初始化失败", initOptions.getMasterBranch()));
+                        NotifyUtil.notifyError(myProject, "Error", String.format(I18n.getContent(I18nKey.INIT_PLUGIN_ACTION$NOT_EXIST_MASTER_INFO), initOptions.getMasterBranch()));
                         return;
                     }
 
@@ -71,9 +76,9 @@ public class InitPluginAction extends AnAction {
                     if (!remoteBranches.contains(initOptions.getTestBranch())) {
                         GitCommandResult result = gitFlowPlus.newNewBranchBaseRemoteMaster(repository, initOptions.getMasterBranch(), initOptions.getTestBranch());
                         if (result.success()) {
-                            NotifyUtil.notifySuccess(myProject, "Success", String.format("基于 origin/%s 成功创建分支 %s ", initOptions.getMasterBranch(), initOptions.getTestBranch()));
+                            NotifyUtil.notifySuccess(myProject, "Success", String.format(I18n.getContent(I18nKey.NEW_BRANCH_SUCCESS), initOptions.getMasterBranch(), initOptions.getTestBranch()));
                         } else {
-                            NotifyUtil.notifyError(myProject, "Error", String.format("GitFlowPlus初始化失败：%s", result.getErrorOutputAsJoinedString()));
+                            NotifyUtil.notifyError(myProject, "Error", String.format(I18n.getContent(I18nKey.INIT_PLUGIN_ACTION$INIT_FAILURE), result.getErrorOutputAsJoinedString()));
                             return;
                         }
                     }
@@ -83,9 +88,9 @@ public class InitPluginAction extends AnAction {
                         // 新建分支发布分支
                         GitCommandResult result = gitFlowPlus.newNewBranchBaseRemoteMaster(repository, initOptions.getMasterBranch(), initOptions.getReleaseBranch());
                         if (result.success()) {
-                            NotifyUtil.notifySuccess(myProject, "Success", String.format("基于 origin/%s 成功创建分支 %s ", initOptions.getMasterBranch(), initOptions.getReleaseBranch()));
+                            NotifyUtil.notifySuccess(myProject, "Success", String.format(I18n.getContent(I18nKey.NEW_BRANCH_SUCCESS), initOptions.getMasterBranch(), initOptions.getReleaseBranch()));
                         } else {
-                            NotifyUtil.notifyError(myProject, "Error", String.format("GitFlowPlus初始化失败：%s", result.getErrorOutputAsJoinedString()));
+                            NotifyUtil.notifyError(myProject, "Error", String.format(I18n.getContent(I18nKey.INIT_PLUGIN_ACTION$INIT_FAILURE), result.getErrorOutputAsJoinedString()));
                             return;
                         }
                     }
@@ -98,7 +103,7 @@ public class InitPluginAction extends AnAction {
                     // 将配置文件加入GIT管理
                     gitFlowPlus.addConfigToGit(repository);
 
-                    NotifyUtil.notifySuccess(myProject, "Success", "GitFlowPlus初始化成功");
+                    NotifyUtil.notifySuccess(myProject, "Success", I18n.getContent(I18nKey.INIT_PLUGIN_ACTION$INIT_SUCCESS));
 
                     //update the widget
                     myProject.getMessageBus().syncPublisher(GitRepository.GIT_REPO_CHANGE).repositoryChanged(repository);

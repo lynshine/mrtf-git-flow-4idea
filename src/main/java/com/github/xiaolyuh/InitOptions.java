@@ -1,5 +1,7 @@
 package com.github.xiaolyuh;
 
+import java.util.Objects;
+
 /**
  * 初始化参数
  *
@@ -51,6 +53,11 @@ public class InitOptions {
      * 钉钉Token
      */
     private String dingtalkToken;
+
+    /**
+     * 语言
+     */
+    private LanguageEnum language;
 
     public String getMasterBranch() {
         return masterBranch;
@@ -122,5 +129,13 @@ public class InitOptions {
 
     public void setDingtalkToken(String dingtalkToken) {
         this.dingtalkToken = dingtalkToken;
+    }
+
+    public LanguageEnum getLanguage() {
+        return Objects.isNull(language) ? LanguageEnum.CN : language;
+    }
+
+    public void setLanguage(LanguageEnum language) {
+        this.language = language;
     }
 }

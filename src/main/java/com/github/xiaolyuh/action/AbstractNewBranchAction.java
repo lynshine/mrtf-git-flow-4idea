@@ -1,6 +1,7 @@
 package com.github.xiaolyuh.action;
 
 import com.github.xiaolyuh.GitFlowPlus;
+import com.github.xiaolyuh.i18n.I18n;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.utils.GitBranchUtil;
 import com.github.xiaolyuh.utils.NotifyUtil;
@@ -36,7 +37,15 @@ public abstract class AbstractNewBranchAction extends AnAction {
         super.update(event);
         Project project = event.getProject();
         event.getPresentation().setEnabled(GitBranchUtil.isGitProject(project) && ConfigUtil.isInit(project));
+        I18n.init(project);
+        setEnabledAndText(event);
     }
+
+    /**
+     * 设置是否启用和Text
+     * @param event
+     */
+    protected abstract void setEnabledAndText(AnActionEvent event);
 
     @Override
     public void actionPerformed(AnActionEvent event) {

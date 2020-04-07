@@ -1,6 +1,9 @@
 package com.github.xiaolyuh.ui;
 
 import com.github.xiaolyuh.InitOptions;
+import com.github.xiaolyuh.LanguageEnum;
+import com.github.xiaolyuh.i18n.I18n;
+import com.github.xiaolyuh.i18n.I18nKey;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.utils.GitBranchUtil;
 import com.google.common.collect.Lists;
@@ -33,28 +36,46 @@ public class InitPluginDialog extends DialogWrapper {
     private JTextField dingtalkTokenTextField;
     private JCheckBox releaseFinishIsDeleteReleaseCheckBox;
     private JCheckBox releaseFinishIsDeleteFeatureCheckBox;
+    private JComboBox<String> languageComboBox;
+    private JLabel specialBranchConfigLabel;
+    private JLabel mastBranchLabel;
+    private JLabel releaseBranchLabel;
+    private JLabel testBranchLabel;
+    private JLabel branchOptionsConfig;
+    private JLabel branchPrefixConfigLabel;
+    private JLabel featureBranchPrefixLabel;
+    private JLabel hotfixBranchPrefixLabel;
+    private JLabel tagNamePrefixLabel;
 
     public InitPluginDialog(Project project) {
         super(project);
+        I18n.init(project);
 
-        setTitle("插件初始化");
+        setTitle(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$TITLE));
 
         initDialog(project);
 
-        enableFields();
-
         init();
+        languageComboBox.addItemListener(e -> {
+            I18n.loadLanguageProperties(LanguageEnum.getByLanguage((String) languageComboBox.getSelectedItem()));
+            languageSwitch();
+        });
     }
 
-    private void enableFields() {
-        masterBranchComboBox.setEnabled(true);
-        releaseBranchComboBox.setEnabled(true);
-        testBranchComboBox.setEnabled(true);
-        featurePrefixTextField.setEnabled(true);
-        hotfixPrefixTextField.setEnabled(true);
-        tagPrefixTextField.setEnabled(true);
-        releaseFinishIsDeleteReleaseCheckBox.setEnabled(false);
-        releaseFinishIsDeleteFeatureCheckBox.setEnabled(false);
+    private void languageSwitch() {
+        setTitle(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$TITLE));
+
+        specialBranchConfigLabel.setText(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$SPECIAL_BRANCH_CONFIG_LABEL));
+        mastBranchLabel.setText(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$MAST_BRANCH_LABEL));
+        releaseBranchLabel.setText(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$RELEASE_BRANCH_LABEL));
+        testBranchLabel.setText(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$TEST_BRANCH_LABEL));
+        branchOptionsConfig.setText(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$BRANCH_OPTIONS_CONFIG));
+        releaseFinishIsDeleteReleaseCheckBox.setText(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$RELEASE_FINISH_DELETE_RELEASE));
+        releaseFinishIsDeleteFeatureCheckBox.setText(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$RELEASE_FINISH_DELETE_FEATURE));
+        branchPrefixConfigLabel.setText(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$BRANCH_PREFIX_CONFIG_LABEL));
+        featureBranchPrefixLabel.setText(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$FEATURE_BRANCH_PREFIX_LABEL));
+        hotfixBranchPrefixLabel.setText(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$HOTFIX_BRANCH_PREFIX_LABEL));
+        tagNamePrefixLabel.setText(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$TAG_NAME_PREFIX_LABEL));
     }
 
 
@@ -70,6 +91,7 @@ public class InitPluginDialog extends DialogWrapper {
         options.setReleaseFinishIsDeleteFeature(releaseFinishIsDeleteFeatureCheckBox.isSelected());
         options.setReleaseFinishIsDeleteRelease(releaseFinishIsDeleteReleaseCheckBox.isSelected());
         options.setDingtalkToken(dingtalkTokenTextField.getText());
+        options.setLanguage(LanguageEnum.getByLanguage((String) languageComboBox.getSelectedItem()));
 
         return options;
     }
@@ -80,6 +102,8 @@ public class InitPluginDialog extends DialogWrapper {
     private void initDialog(Project project) {
         Optional<InitOptions> options = ConfigUtil.getConfig(project);
         List<String> remoteBranches = GitBranchUtil.getRemoteBranches(project);
+        List<String> languages = LanguageEnum.getAllLanguage();
+
         if (options.isPresent()) {
             List<String> masterBranchList = Lists.newArrayList(options.get().getMasterBranch());
             List<String> releaseBranchList = Lists.newArrayList(options.get().getReleaseBranch());
@@ -87,9 +111,10 @@ public class InitPluginDialog extends DialogWrapper {
             masterBranchList.addAll(remoteBranches);
             releaseBranchList.addAll(remoteBranches);
             testBranchList.addAll(remoteBranches);
-            masterBranchComboBox.setModel(new CollectionComboBoxModel<>(masterBranchList));
-            releaseBranchComboBox.setModel(new CollectionComboBoxModel<>(releaseBranchList));
-            testBranchComboBox.setModel(new CollectionComboBoxModel<>(testBranchList));
+            masterBranchComboBox.setModel(new CollectionComboBoxModel<>(remoteBranches, options.get().getMasterBranch()));
+            releaseBranchComboBox.setModel(new CollectionComboBoxModel<>(remoteBranches, options.get().getReleaseBranch()));
+            testBranchComboBox.setModel(new CollectionComboBoxModel<>(remoteBranches, options.get().getTestBranch()));
+            languageComboBox.setModel(new CollectionComboBoxModel<>(languages, options.get().getLanguage().getLanguage()));
 
             featurePrefixTextField.setText(options.get().getFeaturePrefix());
             hotfixPrefixTextField.setText(options.get().getHotfixPrefix());
@@ -97,11 +122,14 @@ public class InitPluginDialog extends DialogWrapper {
             releaseFinishIsDeleteReleaseCheckBox.setSelected(false);
             releaseFinishIsDeleteFeatureCheckBox.setSelected(false);
             dingtalkTokenTextField.setText(options.get().getDingtalkToken());
+
+            languageSwitch();
         } else {
 
             masterBranchComboBox.setModel(new CollectionComboBoxModel<>(remoteBranches));
             releaseBranchComboBox.setModel(new CollectionComboBoxModel<>(remoteBranches));
             testBranchComboBox.setModel(new CollectionComboBoxModel<>(remoteBranches));
+            languageComboBox.setModel(new CollectionComboBoxModel<>(languages));
         }
     }
 

@@ -1,6 +1,8 @@
 package com.github.xiaolyuh.ui;
 
 import com.github.xiaolyuh.action.*;
+import com.github.xiaolyuh.i18n.I18n;
+import com.github.xiaolyuh.i18n.I18nKey;
 import com.intellij.openapi.actionSystem.CustomShortcutSet;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Separator;
@@ -15,7 +17,6 @@ import com.intellij.openapi.wm.impl.status.TextPanel;
 import com.intellij.ui.ClickListener;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.popup.PopupFactoryImpl;
-import git4idea.actions.GitResolveConflictsAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,14 +86,14 @@ public class GitFlowPlusWidget extends EditorBasedWidget implements StatusBarWid
         popupGroup.add(new NewHotFixAction());
         popupGroup.add(new Separator());
 
-        DefaultActionGroup rebuildPopupGroup = new DefaultActionGroup("重建分支", true);
+        DefaultActionGroup rebuildPopupGroup = new RebuildActionGroup("重建分支", true);
         rebuildPopupGroup.add(new RebuildTestAction());
         rebuildPopupGroup.add(new RebuildReleaseAction());
         popupGroup.add(rebuildPopupGroup);
         popupGroup.add(new Separator());
 
         GitResolveConflictsAction conflictsAction = new GitResolveConflictsAction();
-        conflictsAction.getTemplatePresentation().setText("解决冲突");
+        conflictsAction.getTemplatePresentation().setText(I18n.getContent(I18nKey.GIT_RESOLVE_CONFLICTS_ACTION$TEXT));
         popupGroup.add(conflictsAction);
         popupGroup.add(new Separator());
 

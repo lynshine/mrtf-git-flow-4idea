@@ -1,5 +1,7 @@
 package com.github.xiaolyuh.action;
 
+import com.github.xiaolyuh.i18n.I18n;
+import com.github.xiaolyuh.i18n.I18nKey;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.valve.merge.ChangeFileValve;
 import com.github.xiaolyuh.valve.merge.UnLockCheckValve;
@@ -25,13 +27,12 @@ public class FailureReleaseAction extends AbstractMergeAction {
     }
 
     @Override
-    public void update(@NotNull AnActionEvent event) {
-        super.update(event);
+    protected void setEnabledAndText(AnActionEvent event) {
+        event.getPresentation().setText(I18n.getContent(I18nKey.FAILURE_RELEASE_ACTION$TEXT));
         if (event.getPresentation().isEnabled()) {
             event.getPresentation().setEnabled(gitFlowPlus.isLock(event.getProject()));
         }
     }
-
 
     @Override
     protected String getTargetBranch(Project project) {
@@ -40,19 +41,19 @@ public class FailureReleaseAction extends AbstractMergeAction {
 
     @Override
     protected String getDialogTitle(Project project) {
-        return "发布失败";
+        return I18n.getContent(I18nKey.FAILURE_RELEASE_ACTION$DIALOG_TITLE);
     }
 
     @Override
     protected String getDialogContent(Project project) {
         String release = ConfigUtil.getConfig(project).get().getReleaseBranch();
-        return String.format("发布失败将会解除 %s 分支的锁定", release);
+        return String.format(I18n.getContent(I18nKey.FAILURE_RELEASE_ACTION$DIALOG_CONTENT), release);
     }
 
     @Override
     protected String getTaskTitle(Project project) {
         String release = ConfigUtil.getConfig(project).get().getReleaseBranch();
-        return String.format("正在解除 %s 分支的锁定", release);
+        return String.format(I18n.getContent(I18nKey.FAILURE_RELEASE_ACTION$TASK_TITLE), release);
     }
 
     @Override

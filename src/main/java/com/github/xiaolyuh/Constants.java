@@ -6,7 +6,7 @@ package com.github.xiaolyuh;
  * @author yuhao.wang3
  * @since 2020/3/18 9:52
  */
-public class Constants {
+public abstract class Constants {
     /**
      * 本地缓存前缀
      */

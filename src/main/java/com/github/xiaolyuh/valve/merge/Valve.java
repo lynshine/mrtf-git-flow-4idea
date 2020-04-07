@@ -13,6 +13,8 @@ public abstract class Valve {
     GitFlowPlus gitFlowPlus = GitFlowPlus.getInstance();
 
     /**
+     * 执行阀门逻辑
+     *
      * @param project       {@link Project}
      * @param repository    {@link GitRepository}
      * @param currentBranch 当前分支

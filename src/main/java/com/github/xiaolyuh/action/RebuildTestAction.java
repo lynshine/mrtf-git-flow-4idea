@@ -1,7 +1,10 @@
 package com.github.xiaolyuh.action;
 
+import com.github.xiaolyuh.i18n.I18n;
+import com.github.xiaolyuh.i18n.I18nKey;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.utils.StringUtils;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
@@ -19,21 +22,31 @@ public class RebuildTestAction extends AbstractNewBranchAction {
     }
 
     @Override
+    protected void setEnabledAndText(AnActionEvent event) {
+        event.getPresentation().setText(I18n.getContent(I18nKey.REBUILD_TEST_ACTION$TEXT));
+        if (event.getPresentation().isEnabled()) {
+            event.getPresentation().setEnabled(!gitFlowPlus.isLock(event.getProject()));
+        }
+    }
+
+    @Override
     public String getPrefix(Project project) {
         return StringUtils.EMPTY;
     }
 
     @Override
     public String getInputString(Project project) {
-        String test = ConfigUtil.getConfig(project).get().getTestBranch();
-        int flag = Messages.showOkCancelDialog(project, String.format("你是否需要重建 %s 分支，原来的 %s 分支将会被删除!", test, test),
-                "创建测试分支", "确认", "取消", IconLoader.getIcon("/icons/warning.svg"));
+        String release = ConfigUtil.getConfig(project).get().getReleaseBranch();
+        int flag = Messages.showOkCancelDialog(project,
+                String.format(I18n.getContent(I18nKey.REBUILD_TEST_ACTION$DIALOG_MESSAGE), release, release),
+                I18n.getContent(I18nKey.REBUILD_TEST_ACTION$DIALOG_TITLE),
+                I18n.getContent(I18nKey.OK_TEXT), I18n.getContent(I18nKey.CANCEL_TEXT), IconLoader.getIcon("/icons/warning.svg"));
 
-        return flag == 0 ? test : StringUtils.EMPTY;
+        return flag == 0 ? release : StringUtils.EMPTY;
     }
 
     @Override
     public String getTitle(String branchName) {
-        return "正在创建测试分支: " + branchName;
+        return I18n.getContent(I18nKey.REBUILD_TEST_ACTION$TITLE) + ": " + branchName;
     }
 }

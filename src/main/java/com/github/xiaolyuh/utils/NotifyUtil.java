@@ -35,7 +35,7 @@ public class NotifyUtil {
     }
 
     public static void notifyGitCommand(Project project, String command) {
-        notify(NotificationType.WARNING, NONE, project, "Git 命令", command);
+        notify(NotificationType.WARNING, NONE, project, "Git command:", command);
     }
 
     private static void notify(NotificationType type, NotificationGroup group, Project project, String title, String message) {

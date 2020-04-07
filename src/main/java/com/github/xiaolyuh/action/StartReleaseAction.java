@@ -1,8 +1,11 @@
 package com.github.xiaolyuh.action;
 
 import com.github.xiaolyuh.GitFlowPlus;
+import com.github.xiaolyuh.i18n.I18n;
+import com.github.xiaolyuh.i18n.I18nKey;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.valve.merge.*;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 
@@ -22,18 +25,23 @@ public class StartReleaseAction extends AbstractMergeAction {
     }
 
     @Override
+    protected void setEnabledAndText(AnActionEvent event) {
+        event.getPresentation().setText(I18n.getContent(I18nKey.START_RELEASE_ACTION$TEXT));
+    }
+
+    @Override
     protected String getTargetBranch(Project project) {
         return ConfigUtil.getConfig(project).get().getReleaseBranch();
     }
 
     @Override
     protected String getDialogTitle(Project project) {
-        return "发布";
+        return I18n.getContent(I18nKey.START_RELEASE_ACTION$DIALOG_TITLE);
     }
 
     @Override
     protected String getTaskTitle(Project project) {
-        return String.format("将 %s 分支，合并到 %s 分支", GitFlowPlus.getInstance().getCurrentBranch(project), getTargetBranch(project));
+        return String.format(I18n.getContent(I18nKey.MERGE_BRANCH_TASK_TITLE), GitFlowPlus.getInstance().getCurrentBranch(project), getTargetBranch(project));
     }
 
     @Override

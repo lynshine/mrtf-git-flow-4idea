@@ -1,12 +1,13 @@
 package com.github.xiaolyuh.action;
 
+import com.github.xiaolyuh.i18n.I18n;
+import com.github.xiaolyuh.i18n.I18nKey;
 import com.github.xiaolyuh.ui.TagDialog;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.valve.merge.*;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +25,8 @@ public class FinishReleaseAction extends AbstractMergeAction {
     }
 
     @Override
-    public void update(@NotNull AnActionEvent event) {
-        super.update(event);
+    protected void setEnabledAndText(AnActionEvent event) {
+        event.getPresentation().setText(I18n.getContent(I18nKey.FINISH_RELEASE_ACTION$TEXT));
         if (event.getPresentation().isEnabled()) {
             event.getPresentation().setEnabled(gitFlowPlus.isLock(event.getProject()));
         }
@@ -49,13 +50,13 @@ public class FinishReleaseAction extends AbstractMergeAction {
 
     @Override
     protected String getDialogTitle(Project project) {
-        return "发布成功";
+        return I18n.getContent(I18nKey.FINISH_RELEASE_ACTION$DIALOG_TITLE);
     }
 
     @Override
     protected String getTaskTitle(Project project) {
         String release = ConfigUtil.getConfig(project).get().getReleaseBranch();
-        return String.format("将 %s 分支，合并到 %s 分支", release, getTargetBranch(project));
+        return String.format(I18n.getContent(I18nKey.MERGE_BRANCH_TASK_TITLE), release, getTargetBranch(project));
     }
 
     @Override
