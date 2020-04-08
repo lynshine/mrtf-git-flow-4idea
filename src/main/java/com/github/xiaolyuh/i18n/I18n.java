@@ -18,12 +18,14 @@ import java.util.Properties;
  */
 public class I18n {
     private static Properties properties;
+    private static Project project;
 
     public static void init(Project project) {
         if (Objects.isNull(project)) {
-            return;
+            loadLanguageProperties(LanguageEnum.CN);
         }
-        if (Objects.isNull(properties)) {
+        if (Objects.isNull(I18n.project) && Objects.nonNull(project)) {
+            I18n.project = project;
             loadLanguageProperties(ConfigUtil.getConfig(project).orElse(new InitOptions()).getLanguage());
         }
     }
