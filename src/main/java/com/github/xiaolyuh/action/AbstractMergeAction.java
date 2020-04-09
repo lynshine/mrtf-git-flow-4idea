@@ -146,7 +146,7 @@ public abstract class AbstractMergeAction extends AnAction {
      * @return String
      */
     protected String getDialogContent(Project project) {
-        return String.format("你是否确认将 %s 分支，合并到 %s 分支？", gitFlowPlus.getCurrentBranch(project), getTargetBranch(project));
+        return String.format(I18n.getContent(I18nKey.MERGE_BRANCH_MSG), gitFlowPlus.getCurrentBranch(project), getTargetBranch(project));
     }
 
     /**

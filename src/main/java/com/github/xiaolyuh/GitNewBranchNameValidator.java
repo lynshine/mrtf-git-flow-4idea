@@ -1,5 +1,7 @@
 package com.github.xiaolyuh;
 
+import com.github.xiaolyuh.i18n.I18n;
+import com.github.xiaolyuh.i18n.I18nKey;
 import com.intellij.openapi.ui.InputValidatorEx;
 import git4idea.GitBranch;
 import git4idea.branch.GitBranchUtil;
@@ -33,7 +35,7 @@ public final class GitNewBranchNameValidator implements InputValidatorEx {
     @Override
     public boolean checkInput(@NotNull String inputString) {
         if (!GitRefNameValidator.getInstance().checkInput(inputString)) {
-            myErrorText = "无效的分支名称";
+            myErrorText = I18n.getContent(I18nKey.BRANCH_VALIDATOR$INVALID_BRANCH);
             return false;
         }
         return checkBranchConflict(prefix + inputString);
@@ -49,18 +51,18 @@ public final class GitNewBranchNameValidator implements InputValidatorEx {
 
     private boolean isNotPermitted(@NotNull String inputString) {
         if (inputString.equalsIgnoreCase("head")) {
-            myErrorText = "分支名称 " + inputString + " 不可用";
+            myErrorText = String.format(I18n.getContent(I18nKey.BRANCH_VALIDATOR$NOT_PERMITTED), inputString);
             return true;
         }
         return false;
     }
 
     private boolean conflictsWithLocalBranch(@NotNull String inputString) {
-        return conflictsWithLocalOrRemote(inputString, true, " 在本地仓库中已经存在");
+        return conflictsWithLocalOrRemote(inputString, true, " " + I18n.getContent(I18nKey.BRANCH_VALIDATOR$LOCAL_CONFLICTS));
     }
 
     private boolean conflictsWithRemoteBranch(@NotNull String inputString) {
-        return conflictsWithLocalOrRemote(inputString, false, " 在远程仓库中已存在");
+        return conflictsWithLocalOrRemote(inputString, false, " " + I18n.getContent(I18nKey.BRANCH_VALIDATOR$REMOTE_CONFLICTS));
     }
 
     private boolean conflictsWithLocalOrRemote(@NotNull String inputString, boolean local, @NotNull String message) {
@@ -73,7 +75,7 @@ public final class GitNewBranchNameValidator implements InputValidatorEx {
                 Collection<? extends GitBranch> branches = local ? branchesCollection.getLocalBranches() : branchesCollection.getRemoteBranches();
                 for (GitBranch branch : branches) {
                     if (branch.getName().equals(inputString)) {
-                        myErrorText = "分支名称 " + inputString + message;
+                        myErrorText = "Branch name " + inputString + message;
                         if (myRepositories.size() > 1 && !allReposHaveBranch(inputString, local)) {
                             myErrorText += " in repository " + repository.getPresentableUrl();
                         }
@@ -83,7 +85,7 @@ public final class GitNewBranchNameValidator implements InputValidatorEx {
             }
         }
         if (conflictsWithCurrentName == myRepositories.size()) {
-            myErrorText = "你当前正处于 " + inputString + " 分支";
+            myErrorText = String.format(I18n.getContent(I18nKey.BRANCH_VALIDATOR$CURRENT_BRANCH), inputString);;
             return true;
         }
         return false;

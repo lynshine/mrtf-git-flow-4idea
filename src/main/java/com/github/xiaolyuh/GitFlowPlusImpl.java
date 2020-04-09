@@ -1,5 +1,7 @@
 package com.github.xiaolyuh;
 
+import com.github.xiaolyuh.i18n.I18n;
+import com.github.xiaolyuh.i18n.I18nKey;
 import com.github.xiaolyuh.utils.*;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.application.ReadAction;
@@ -76,8 +78,8 @@ public class GitFlowPlusImpl implements GitFlowPlus {
     public String getRemoteLastCommit(@NotNull GitRepository repository, @Nullable String remoteBranchName) {
         GitCommandResult result = git.showRemoteLastCommit(repository, remoteBranchName);
         String msg = result.getOutputAsJoinedString();
-        msg = msg.replaceFirst("Author:", "\r\n  操作人: ");
-        msg = msg.replaceFirst("-Date:", ";\r\n  时间: ");
+        msg = msg.replaceFirst("Author:", "\r\n  Author: ");
+        msg = msg.replaceFirst("-Date:", ";\r\n  Date: ");
         msg = msg.replaceFirst("-Message:", ";\r\n  Message: ");
         return msg;
     }
@@ -177,7 +179,7 @@ public class GitFlowPlusImpl implements GitFlowPlus {
                 String url = String.format("https://oapi.dingtalk.com/robot/send?access_token=%s", dingtalkToken);
                 String msg = getRemoteLastCommit(repository, ConfigUtil.getConfig(repository.getProject()).get().getReleaseBranch());
 
-                msg = String.format("%s 服务发布分支已被锁定，最后一次操作：%s ;\r\n如需强行发布，请先点[发布失败]解除锁定，再点[开始发布]。", repository.getProject().getName(), msg);
+                msg = String.format(I18n.getContent(I18nKey.THIRD_PARTY_NOTIFY), repository.getProject().getName(), msg);
                 OkHttpClientUtil.postApplicationJson(url, new DingtalkMessage(msg), "钉钉通知接口", String.class);
             }
         } catch (Exception e) {
@@ -193,7 +195,7 @@ public class GitFlowPlusImpl implements GitFlowPlus {
         if (CollectionUtils.isNotEmpty(changes)) {
             StringBuffer builder = new StringBuffer();
             changes.parallelStream().forEach(change -> builder.append(change.toString() + "\r\n"));
-            NotifyUtil.notifyError(project, "Error", String.format("当前分支存在未提交的文件:\r\n %s", builder.toString()));
+            NotifyUtil.notifyError(project, "Error", String.format(I18n.getContent(I18nKey.CHANGE_FILE_VALVE$FILE_NOT_SUBMITTED) + ":\r\n %s", builder.toString()));
             return true;
         }
         return false;
@@ -277,7 +279,7 @@ public class GitFlowPlusImpl implements GitFlowPlus {
 
         @Override
         protected void notifyUnresolvedRemain() {
-            notifyWarning("合并代码冲突", String.format("%s 分支合并到 %s分支发生代码冲突", currentBranch, targetBranch));
+            notifyWarning(I18n.getContent(I18nKey.MERGE_CONFLICT_TITLE), String.format(I18n.getContent(I18nKey.MERGE_CONFLICT_CONTENT), currentBranch, targetBranch));
         }
     }
 

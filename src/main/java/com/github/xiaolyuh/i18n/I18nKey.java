@@ -19,6 +19,11 @@ public abstract class I18nKey {
     public static final String INIT_PLUGIN_DIALOG$FEATURE_BRANCH_PREFIX_LABEL = "InitPluginDialog.featureBranchPrefixLabel";
     public static final String INIT_PLUGIN_DIALOG$HOTFIX_BRANCH_PREFIX_LABEL = "InitPluginDialog.hotfixBranchPrefixLabel";
     public static final String INIT_PLUGIN_DIALOG$TAG_NAME_PREFIX_LABEL = "InitPluginDialog.tagNamePrefixLabel";
+    public static final String INIT_PLUGIN_DIALOG$RELEASE_LIKE_MASTER = "InitPluginDialog.ReleaseLikeMaster";
+    public static final String INIT_PLUGIN_DIALOG$TEST_LIKE_MASTER = "InitPluginDialog.TestLikeMaster";
+    public static final String INIT_PLUGIN_DIALOG$TEST_LIKE_RELEASE = "InitPluginDialog.TestLikeRelease";
+    public static final String INIT_PLUGIN_DIALOG$FEATURE_PREFIX_REQUIRED = "InitPluginDialog.FeaturePrefixRequired";
+    public static final String INIT_PLUGIN_DIALOG$HOTFIX_PREFIX_REQUIRED = "InitPluginDialog.HotfixPrefixRequired";
 
     public static final String FAILURE_RELEASE_ACTION$TEXT = "FailureReleaseAction.text";
     public static final String FAILURE_RELEASE_ACTION$DIALOG_TITLE = "FailureReleaseAction.DialogTitle";
@@ -70,4 +75,31 @@ public abstract class I18nKey {
     public static final String CANCEL_TEXT = "CancelText";
     public static final String MERGE_BRANCH_TASK_TITLE = "MergeBranchTaskTitle";
 
+
+    public static final String TAG_DIALOG$TITLE = "TagDialog.Title";
+    public static final String TAG_DIALOG$TAG_NAME_REQUIRED = "TagDialog.TagNameRequired";
+    public static final String TAG_DIALOG$TAG_NAME_ILLEGAL = "TagDialog.TagNameIllegal";
+    public static final String TAG_DIALOG$TAG_NAME_EXIST = "TagDialog.TagNameExist";
+    public static final String TAG_DIALOG$TAG_MESSAGE_REQUIRED = "TagDialog.TagMessageRequired";
+
+    public static final String CHANGE_FILE_VALVE$FILE_NOT_SUBMITTED = "ChangeFileValve.FileNotSubmitted";
+    public static final String LOCK_VALVE$LOCKED = "LockValve.Locked";
+    public static final String MERGE_VALVE$MERGE_SUCCESS = "MergeValve.MergeSuccess";
+    public static final String UN_LOCK_CHECK_VALVE$UN_LOCKED = "UnLockCheckValve.UnLocked";
+    public static final String UN_LOCK_VALVE$UN_LOCKED_SUCCESS = "UnLockValve.UnLockSuccess";
+    public static final String UN_LOCK_VALVE$UN_LOCKED_ERROR = "UnLockValve.UnLockError";
+
+    public static final String BRANCH_VALIDATOR$INVALID_BRANCH = "BranchNameValidator.InvalidBranch";
+    public static final String BRANCH_VALIDATOR$NOT_PERMITTED = "BranchNameValidator.NotPermitted";
+    public static final String BRANCH_VALIDATOR$LOCAL_CONFLICTS = "BranchNameValidator.LocalConflicts";
+    public static final String BRANCH_VALIDATOR$REMOTE_CONFLICTS = "BranchNameValidator.RemoteConflicts";
+    public static final String BRANCH_VALIDATOR$CURRENT_BRANCH = "BranchNameValidator.CurrentBranch";
+
+    public static final String THIRD_PARTY_NOTIFY = "ThirdPartyNotify";
+    public static final String MERGE_CONFLICT_TITLE = "MergeConflictTitle";
+    public static final String MERGE_CONFLICT_CONTENT = "MergeConflictContent";
+    public static final String MERGE_BRANCH_MSG = "MergeBranchMsg";
+
+    public static final String DELETE_BRANCH_SUCCESS = "DeleteBranchSuccess";
+    public static final String DELETE_BRANCH_ERROR = "DeleteBranchError";
 }

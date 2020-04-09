@@ -1,6 +1,8 @@
 package com.github.xiaolyuh.valve.merge;
 
 import com.github.xiaolyuh.TagOptions;
+import com.github.xiaolyuh.i18n.I18n;
+import com.github.xiaolyuh.i18n.I18nKey;
 import com.github.xiaolyuh.utils.CollectionUtils;
 import com.github.xiaolyuh.utils.NotifyUtil;
 import com.intellij.openapi.project.Project;
@@ -29,7 +31,7 @@ public class ChangeFileValve extends Valve {
         if (CollectionUtils.isNotEmpty(changes)) {
             StringBuffer builder = new StringBuffer();
             changes.parallelStream().forEach(change -> builder.append(change.toString() + "\r\n"));
-            NotifyUtil.notifyError(project, "Error", String.format("当前分支存在未提交的文件:\r\n %s", builder.toString()));
+            NotifyUtil.notifyError(project, "Error", String.format(I18n.getContent(I18nKey.CHANGE_FILE_VALVE$FILE_NOT_SUBMITTED) + ":\r\n %s", builder.toString()));
             return false;
         }
         return true;

@@ -23,6 +23,9 @@ GitFlowPlus4Idea插件是一款基于[mrtf-git-flow](https://xiaolyuh.blog.csdn.
 4. 解决发布完成后忘记将代码同步到```origin/master```分支；
 5. 发布完成后忘记打Tag；
 
+# Switch To English
+![switch_to_english.gif](https://github.com/xiaolyuh/mrtf-git-flow-4idea/blob/master/images/switch_to_english.gif)
+
 # 安装
 ## 在线安装
 ![local_install.gif](https://github.com/xiaolyuh/mrtf-git-flow-4idea/blob/master/images/online_install.gif)

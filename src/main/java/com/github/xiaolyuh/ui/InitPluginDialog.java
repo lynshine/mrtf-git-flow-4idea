@@ -147,19 +147,20 @@ public class InitPluginDialog extends DialogWrapper {
     @Override
     protected ValidationInfo doValidate() {
         if (Objects.equals(masterBranchComboBox.getSelectedItem(), releaseBranchComboBox.getSelectedItem())) {
-            return new ValidationInfo("发布分支和主干分支不能相同", releaseBranchComboBox);
+
+            return new ValidationInfo(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$RELEASE_LIKE_MASTER), releaseBranchComboBox);
         }
         if (Objects.equals(masterBranchComboBox.getSelectedItem(), testBranchComboBox.getSelectedItem())) {
-            return new ValidationInfo("测试分支和主干分支不能相同", testBranchComboBox);
+            return new ValidationInfo(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$TEST_LIKE_MASTER), testBranchComboBox);
         }
         if (releaseBranchComboBox.getSelectedItem().equals(testBranchComboBox.getSelectedItem())) {
-            return new ValidationInfo("测试分支和发布分支不能相同", testBranchComboBox);
+            return new ValidationInfo(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$TEST_LIKE_RELEASE), testBranchComboBox);
         }
         if (StringUtil.isEmptyOrSpaces(featurePrefixTextField.getText())) {
-            return new ValidationInfo("请填写开发分支的前缀", featurePrefixTextField);
+            return new ValidationInfo(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$FEATURE_PREFIX_REQUIRED), featurePrefixTextField);
         }
         if (StringUtil.isEmptyOrSpaces(hotfixPrefixTextField.getText())) {
-            return new ValidationInfo("请填写修复分支的前缀", hotfixPrefixTextField);
+            return new ValidationInfo(I18n.getContent(I18nKey.INIT_PLUGIN_DIALOG$HOTFIX_PREFIX_REQUIRED), hotfixPrefixTextField);
         }
 
         return null;

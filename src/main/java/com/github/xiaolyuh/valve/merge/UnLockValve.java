@@ -1,6 +1,8 @@
 package com.github.xiaolyuh.valve.merge;
 
 import com.github.xiaolyuh.TagOptions;
+import com.github.xiaolyuh.i18n.I18n;
+import com.github.xiaolyuh.i18n.I18nKey;
 import com.github.xiaolyuh.utils.NotifyUtil;
 import com.intellij.openapi.project.Project;
 import git4idea.commands.GitCommandResult;
@@ -24,11 +26,11 @@ public class UnLockValve extends Valve {
         GitCommandResult result = gitFlowPlus.unlock(repository);
 
         if (result.success()) {
-            NotifyUtil.notifySuccess(repository.getProject(), "Success", "发布分支已解除锁定，可以再次点击[开始发布]");
+            NotifyUtil.notifySuccess(repository.getProject(), "Success", I18n.getContent(I18nKey.UN_LOCK_VALVE$UN_LOCKED_SUCCESS));
             return true;
         }
 
-        NotifyUtil.notifyError(repository.getProject(), "Error", String.format("发布分支解除锁定失败: %s", result.getErrorOutputAsJoinedString()));
+        NotifyUtil.notifyError(repository.getProject(), "Error", String.format(I18n.getContent(I18nKey.UN_LOCK_VALVE$UN_LOCKED_ERROR) + ":%s", result.getErrorOutputAsJoinedString()));
         return false;
     }
 }

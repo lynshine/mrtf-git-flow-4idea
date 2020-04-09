@@ -1,6 +1,8 @@
 package com.github.xiaolyuh.valve.merge;
 
 import com.github.xiaolyuh.TagOptions;
+import com.github.xiaolyuh.i18n.I18n;
+import com.github.xiaolyuh.i18n.I18nKey;
 import com.github.xiaolyuh.utils.NotifyUtil;
 import com.intellij.openapi.project.Project;
 import git4idea.repo.GitRepository;
@@ -22,8 +24,7 @@ public class LockValve extends Valve {
     public boolean invoke(Project project, GitRepository repository, String currentBranch, String targetBranch, TagOptions tagOptions) {
         if (!gitFlowPlus.lock(repository, currentBranch)) {
             String msg = gitFlowPlus.getRemoteLastCommit(repository, targetBranch);
-            NotifyUtil.notifyError(project, "Error",
-                    String.format("发布分支已被锁定，最后一次操作：%s ;\r\n如需强行发布，请先点[发布失败]解除锁定，再点[开始发布]。", msg));
+            NotifyUtil.notifyError(project, "Error", String.format(I18n.getContent(I18nKey.LOCK_VALVE$LOCKED), msg));
             return false;
         }
         return true;

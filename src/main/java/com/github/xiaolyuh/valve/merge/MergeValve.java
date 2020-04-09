@@ -1,6 +1,8 @@
 package com.github.xiaolyuh.valve.merge;
 
 import com.github.xiaolyuh.TagOptions;
+import com.github.xiaolyuh.i18n.I18n;
+import com.github.xiaolyuh.i18n.I18nKey;
 import com.github.xiaolyuh.utils.NotifyUtil;
 import com.intellij.openapi.project.Project;
 import git4idea.commands.GitCommandResult;
@@ -23,7 +25,7 @@ public class MergeValve extends Valve {
     public boolean invoke(Project project, GitRepository repository, String currentBranch, String targetBranch, TagOptions tagOptions) {
         GitCommandResult result = gitFlowPlus.mergeBranchAndPush(repository, currentBranch, targetBranch, tagOptions);
         if (result.success()) {
-            NotifyUtil.notifySuccess(project, "Success", String.format("%s 分支已经合并到了 %s 分支，并推送到了远程仓库", currentBranch, targetBranch));
+            NotifyUtil.notifySuccess(project, "Success", String.format(I18n.getContent(I18nKey.MERGE_VALVE$MERGE_SUCCESS), currentBranch, targetBranch));
             return true;
         }
 
