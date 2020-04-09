@@ -6,8 +6,6 @@
     <description>
         <![CDATA[
         This is a branch management plugin for the <a href="https://xiaolyuh.blog.csdn.net/article/details/105180250"> mrtf git flow </a> (master, release, test, feature) process <a href="https://github.com/xiaolyuh/mrtf-git-flow-4idea"> Usage Guide </a>. <br>
-       <br>
-       <img src="https://github.com/xiaolyuh/mrtf-git-flow-4idea/blob/master/images/mrrtf.png"/>
       <br>
      The main functions are as follows: <br>
       1. Plug-in configuration files can be added to GIT version management and shared within the team; <br>
