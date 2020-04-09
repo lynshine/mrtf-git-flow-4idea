@@ -1,6 +1,8 @@
 # 简介
 GitFlowPlus4Idea插件是一款基于[mrtf-git-flow](https://xiaolyuh.blog.csdn.net/article/details/105180250)分支管理流程的Idea插件，它最主要的作用是用来简化分支管理流程，最大限度的防止误操作。
 
+![mrrtf.png](https://github.com/xiaolyuh/mrtf-git-flow-4idea/blob/master/images/mrrtf.png)
+
 > 在初始化插件之前必须先保证仓库中具有```origin/master```分支。
 
 主要功能如下：
