@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.xiaolyuh'
-version '1.0.3'
+version '1.0.4'
 
 sourceCompatibility = 1.8
 
@@ -25,6 +25,10 @@ intellij {
 }
 patchPluginXml {
     changeNotes """
+        <em>1.0.4<em></br>
+        <em>1. 修改发布完成的弹框提示<em></br>
+
+        </br>
         <em>1.0.3<em></br>
         <em>1. 国际化的支持<em></br>
 
