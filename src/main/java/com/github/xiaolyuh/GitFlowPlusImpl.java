@@ -110,9 +110,9 @@ public class GitFlowPlusImpl implements GitFlowPlus {
 
         // 合并代码
         GitSimpleEventDetector mergeConflict = new GitSimpleEventDetector(GitSimpleEventDetector.Event.MERGE_CONFLICT);
-        String branchToMerge = Objects.nonNull(tagOptions) ? releaseBranch : currentBranch;
+        String sourceBranch = Objects.nonNull(tagOptions) ? releaseBranch : currentBranch;
 
-        result = git.merge(repository, branchToMerge, mergeConflict);
+        result = git.merge(repository, sourceBranch, targetBranch, mergeConflict);
 
         boolean allConflictsResolved = true;
         if (mergeConflict.hasHappened()) {

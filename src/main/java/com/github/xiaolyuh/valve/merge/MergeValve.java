@@ -3,10 +3,14 @@ package com.github.xiaolyuh.valve.merge;
 import com.github.xiaolyuh.TagOptions;
 import com.github.xiaolyuh.i18n.I18n;
 import com.github.xiaolyuh.i18n.I18nKey;
+import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.utils.NotifyUtil;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import git4idea.commands.GitCommandResult;
 import git4idea.repo.GitRepository;
+
+import java.util.Objects;
 
 /**
  * 分支合并阀门
@@ -25,7 +29,9 @@ public class MergeValve extends Valve {
     public boolean invoke(Project project, GitRepository repository, String sourceBranch, String targetBranch, TagOptions tagOptions) {
         GitCommandResult result = gitFlowPlus.mergeBranchAndPush(repository, sourceBranch, targetBranch, tagOptions);
         if (result.success()) {
-            NotifyUtil.notifySuccess(project, "Success", String.format(I18n.getContent(I18nKey.MERGE_VALVE$MERGE_SUCCESS), sourceBranch, targetBranch));
+            String releaseBranch = ReadAction.compute(() -> ConfigUtil.getConfig(repository.getProject()).get().getReleaseBranch());
+            String source = Objects.nonNull(tagOptions) ? releaseBranch : sourceBranch;
+            NotifyUtil.notifySuccess(project, "Success", String.format(I18n.getContent(I18nKey.MERGE_VALVE$MERGE_SUCCESS), source, targetBranch));
             return true;
         }
 

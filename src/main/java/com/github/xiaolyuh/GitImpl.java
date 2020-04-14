@@ -193,10 +193,13 @@ public class GitImpl implements Git {
     }
 
     @Override
-    public GitCommandResult merge(@NotNull GitRepository repository, @NotNull String branchToMerge, @NotNull GitLineHandlerListener... listeners) {
+    public GitCommandResult merge(@NotNull GitRepository repository, @NotNull String sourceBranch, @Nullable String targetBranch, @NotNull GitLineHandlerListener... listeners) {
         NotifyUtil.notifyGitCommand(repository.getProject(),
-                String.format("git -c core.quotepath=false -c log.showSignature=false merge %s ['%s' merge into '%s']", branchToMerge, branchToMerge, repository.getCurrentBranch()));
-        return git.merge(repository, branchToMerge, Lists.newArrayList(), listeners);
+                String.format("git -c core.quotepath=false -c log.showSignature=false merge %s -m \"Merge branch '%s' into %s\"", sourceBranch, sourceBranch, targetBranch));
+        List<String> params = new ArrayList<>();
+        params.add("-m");
+        params.add(String.format("Merge branch '%s' into %s", sourceBranch, targetBranch));
+        return git.merge(repository, sourceBranch, params, listeners);
     }
 
     @Override

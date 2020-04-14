@@ -151,12 +151,13 @@ public interface Git {
     /**
      * merge
      *
-     * @param repository    gitRepository
-     * @param branchToMerge 需要merge的分支
-     * @param listeners     GitLineHandlerListener
+     * @param repository   gitRepository
+     * @param sourceBranch 需要merge的分支
+     * @param targetBranch 目标分支（合并到的分支）
+     * @param listeners    GitLineHandlerListener
      * @return
      */
-    GitCommandResult merge(@NotNull GitRepository repository, @NotNull String branchToMerge, @NotNull GitLineHandlerListener... listeners);
+    GitCommandResult merge(@NotNull GitRepository repository, @NotNull String sourceBranch, @NotNull String targetBranch, @NotNull GitLineHandlerListener... listeners);
 
 
     /**
