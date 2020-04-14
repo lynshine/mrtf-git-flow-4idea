@@ -22,7 +22,7 @@ public class UnLockCheckValve extends Valve {
     }
 
     @Override
-    public boolean invoke(Project project, GitRepository repository, String currentBranch, String targetBranch, TagOptions tagOptions) {
+    public boolean invoke(Project project, GitRepository repository, String sourceBranch, String targetBranch, TagOptions tagOptions) {
         String release = ConfigUtil.getConfig(project).get().getReleaseBranch();
         String lastCommitMsg = gitFlowPlus.getRemoteLastCommit(repository, release);
         String email = gitFlowPlus.getUserEmail(repository);

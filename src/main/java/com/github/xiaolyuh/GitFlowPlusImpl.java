@@ -94,7 +94,7 @@ public class GitFlowPlusImpl implements GitFlowPlus {
             return result;
         }
 
-        // 发布完成打拉取release最新代码
+        // 发布完成拉取release最新代码
         if (Objects.nonNull(tagOptions)) {
             result = checkoutTargetBranchAndPull(repository, releaseBranch);
             if (!result.success()) {

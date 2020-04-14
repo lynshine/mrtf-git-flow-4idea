@@ -26,7 +26,7 @@ public class ChangeFileValve extends Valve {
     }
 
     @Override
-    public boolean invoke(Project project, GitRepository repository, String currentBranch, String targetBranch, TagOptions tagOptions) {
+    public boolean invoke(Project project, GitRepository repository, String sourceBranch, String targetBranch, TagOptions tagOptions) {
         Collection<Change> changes = ChangeListManager.getInstance(project).getAllChanges();
         if (CollectionUtils.isNotEmpty(changes)) {
             StringBuffer builder = new StringBuffer();

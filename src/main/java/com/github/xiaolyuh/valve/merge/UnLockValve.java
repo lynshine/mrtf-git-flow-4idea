@@ -22,7 +22,7 @@ public class UnLockValve extends Valve {
     }
 
     @Override
-    public boolean invoke(Project project, GitRepository repository, String currentBranch, String targetBranch, TagOptions tagOptions) {
+    public boolean invoke(Project project, GitRepository repository, String sourceBranch, String targetBranch, TagOptions tagOptions) {
         GitCommandResult result = gitFlowPlus.unlock(repository);
 
         if (result.success()) {

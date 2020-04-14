@@ -22,10 +22,10 @@ public class MergeValve extends Valve {
     }
 
     @Override
-    public boolean invoke(Project project, GitRepository repository, String currentBranch, String targetBranch, TagOptions tagOptions) {
-        GitCommandResult result = gitFlowPlus.mergeBranchAndPush(repository, currentBranch, targetBranch, tagOptions);
+    public boolean invoke(Project project, GitRepository repository, String sourceBranch, String targetBranch, TagOptions tagOptions) {
+        GitCommandResult result = gitFlowPlus.mergeBranchAndPush(repository, sourceBranch, targetBranch, tagOptions);
         if (result.success()) {
-            NotifyUtil.notifySuccess(project, "Success", String.format(I18n.getContent(I18nKey.MERGE_VALVE$MERGE_SUCCESS), currentBranch, targetBranch));
+            NotifyUtil.notifySuccess(project, "Success", String.format(I18n.getContent(I18nKey.MERGE_VALVE$MERGE_SUCCESS), sourceBranch, targetBranch));
             return true;
         }
 
