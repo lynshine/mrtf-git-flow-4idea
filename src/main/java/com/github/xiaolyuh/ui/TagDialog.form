@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="tagPanel" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="550" height="300"/>
+      <xy x="20" y="20" width="641" height="300"/>
     </constraints>
     <properties>
       <enabled value="true"/>
@@ -16,7 +16,7 @@
         </constraints>
         <properties>
           <labelFor value="8101b"/>
-          <text resource-bundle="git4idea/i18n/GitBundle" key="tag.name.label"/>
+          <text value="Tag"/>
         </properties>
       </component>
       <component id="8101b" class="javax.swing.JTextField" binding="tagNameTextField" default-binding="true">
@@ -27,7 +27,7 @@
         </constraints>
         <properties>
           <text value=""/>
-          <toolTipText resource-bundle="git4idea/i18n/GitBundle" key="tag.name.tooltip"/>
+          <toolTipText value=""/>
         </properties>
       </component>
       <component id="34454" class="javax.swing.JLabel">
@@ -36,7 +36,7 @@
         </constraints>
         <properties>
           <labelFor value="d4b16"/>
-          <text resource-bundle="git4idea/i18n/GitBundle" key="tag.message.label"/>
+          <text value="message"/>
           <verticalAlignment value="0"/>
         </properties>
       </component>
@@ -52,7 +52,7 @@
             <properties>
               <rows value="4"/>
               <text value=""/>
-              <toolTipText resource-bundle="git4idea/i18n/GitBundle" key="tag.message.tooltip"/>
+              <toolTipText value=""/>
             </properties>
           </component>
         </children>
