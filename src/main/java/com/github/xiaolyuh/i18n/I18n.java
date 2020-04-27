@@ -4,7 +4,6 @@ import com.github.xiaolyuh.InitOptions;
 import com.github.xiaolyuh.LanguageEnum;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.ReflectionUtil;
 
 import java.io.InputStream;
 import java.util.Objects;
@@ -17,26 +16,31 @@ import java.util.Properties;
  * @since 2020/4/7 19:39
  */
 public class I18n {
-    private static Properties properties;
-    private static Project project;
+    private static volatile Properties properties;
+    private static volatile Project project;
 
     public static void init(Project project) {
-        if (Objects.isNull(project)) {
-            loadLanguageProperties(LanguageEnum.CN);
+        if (Objects.nonNull(I18n.properties)) {
+            return;
         }
-        if (Objects.isNull(I18n.project) && Objects.nonNull(project)) {
-            I18n.project = project;
-            loadLanguageProperties(ConfigUtil.getConfig(project).orElse(new InitOptions()).getLanguage());
+        synchronized (I18n.class) {
+            if (Objects.isNull(I18n.properties)) {
+                if (Objects.isNull(project)) {
+                    loadLanguageProperties(LanguageEnum.CN);
+                }
+                if (Objects.isNull(I18n.project) && Objects.nonNull(project)) {
+                    I18n.project = project;
+                    loadLanguageProperties(ConfigUtil.getConfig(project).orElse(new InitOptions()).getLanguage());
+                }
+            }
         }
     }
 
     public static void loadLanguageProperties(LanguageEnum language) {
         try {
             String fileName = language.getFile();
-
-            Class callerClass = ReflectionUtil.getGrandCallerClass();
             // 加载资源文件
-            try (InputStream in = callerClass.getClassLoader().getResourceAsStream("/" + fileName)) {
+            try (InputStream in = I18n.class.getClassLoader().getResourceAsStream("/" + fileName)) {
                 properties = new Properties();
                 properties.load(in);
             }

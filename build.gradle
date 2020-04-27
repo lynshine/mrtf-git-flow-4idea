@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.xiaolyuh'
-version '1.0.5'
+version '1.0.6'
 
 sourceCompatibility = 1.8
 
@@ -19,13 +19,13 @@ dependencies {
 }
 
 intellij {
-    version '2020.1'
+    version '2018.1'
     plugins 'git4idea', 'tasks'
     intellij.updateSinceUntilBuild false
 }
 patchPluginXml {
     changeNotes """
-        <em>1.0.5<em></br>
+        <em>1.0.6<em></br>
         <em>1. 支持2020.1<em></br>
 
   

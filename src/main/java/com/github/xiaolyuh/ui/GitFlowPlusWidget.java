@@ -39,7 +39,7 @@ public class GitFlowPlusWidget extends EditorBasedWidget implements StatusBarWid
         super(project);
         this.project = project;
 
-        initPopupGroup();
+        initPopupGroup(project);
         myComponent = new TextPanel.WithIconAndArrows() {
         };
 
@@ -76,7 +76,7 @@ public class GitFlowPlusWidget extends EditorBasedWidget implements StatusBarWid
         }
     }
 
-    private void initPopupGroup() {
+    private void initPopupGroup(Project project) {
         //No advanced features in the status-bar widget
         popupGroup = new DefaultActionGroup();
         popupGroup.add(new InitPluginAction());
@@ -92,6 +92,7 @@ public class GitFlowPlusWidget extends EditorBasedWidget implements StatusBarWid
         popupGroup.add(rebuildPopupGroup);
         popupGroup.add(new Separator());
 
+        I18n.init(project);
         GitResolveConflictsAction conflictsAction = new GitResolveConflictsAction();
         conflictsAction.getTemplatePresentation().setText(I18n.getContent(I18nKey.GIT_RESOLVE_CONFLICTS_ACTION$TEXT));
         popupGroup.add(conflictsAction);
