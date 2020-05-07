@@ -1,9 +1,9 @@
 package com.github.xiaolyuh.valve.merge;
 
+import com.github.xiaolyuh.Constants;
 import com.github.xiaolyuh.TagOptions;
 import com.github.xiaolyuh.i18n.I18n;
 import com.github.xiaolyuh.i18n.I18nKey;
-import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.utils.NotifyUtil;
 import com.intellij.openapi.project.Project;
 import git4idea.repo.GitRepository;
@@ -23,8 +23,7 @@ public class UnLockCheckValve extends Valve {
 
     @Override
     public boolean invoke(Project project, GitRepository repository, String sourceBranch, String targetBranch, TagOptions tagOptions) {
-        String release = ConfigUtil.getConfig(project).get().getReleaseBranch();
-        String lastCommitMsg = gitFlowPlus.getRemoteLastCommit(repository, release);
+        String lastCommitMsg = gitFlowPlus.getRemoteLastCommit(repository, Constants.LOCK_BRANCH_NAME);
         String email = gitFlowPlus.getUserEmail(repository);
         // 校验操作人
         if (!lastCommitMsg.contains(email)) {

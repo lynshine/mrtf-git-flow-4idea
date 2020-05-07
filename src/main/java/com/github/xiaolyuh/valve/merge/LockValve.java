@@ -1,5 +1,6 @@
 package com.github.xiaolyuh.valve.merge;
 
+import com.github.xiaolyuh.Constants;
 import com.github.xiaolyuh.TagOptions;
 import com.github.xiaolyuh.i18n.I18n;
 import com.github.xiaolyuh.i18n.I18nKey;
@@ -23,7 +24,7 @@ public class LockValve extends Valve {
     @Override
     public boolean invoke(Project project, GitRepository repository, String sourceBranch, String targetBranch, TagOptions tagOptions) {
         if (!gitFlowPlus.lock(repository, sourceBranch)) {
-            String msg = gitFlowPlus.getRemoteLastCommit(repository, targetBranch);
+            String msg = gitFlowPlus.getRemoteLastCommit(repository, Constants.LOCK_BRANCH_NAME);
             NotifyUtil.notifyError(project, "Error", String.format(I18n.getContent(I18nKey.LOCK_VALVE$LOCKED), msg));
             return false;
         }
