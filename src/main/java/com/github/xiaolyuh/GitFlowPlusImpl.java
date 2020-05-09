@@ -76,6 +76,7 @@ public class GitFlowPlusImpl implements GitFlowPlus {
 
     @Override
     public String getRemoteLastCommit(@NotNull GitRepository repository, @Nullable String remoteBranchName) {
+        git.fetch(repository);
         GitCommandResult result = git.showRemoteLastCommit(repository, remoteBranchName);
         String msg = result.getOutputAsJoinedString();
         msg = msg.replaceFirst("Author:", "\r\n  Author: ");

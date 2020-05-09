@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.xiaolyuh'
-version '1.0.8'
+version '1.0.9'
 
 sourceCompatibility = 1.8
 
@@ -25,6 +25,9 @@ intellij {
 }
 patchPluginXml {
     changeNotes """
+        <em>1.0.9<em></br>
+        <em>1. 获取最后一次操作人时先fetch下<em></br>        
+        
         <em>1.0.8<em></br>
         <em>1. 最后一次操作人从锁定分支上面取<em></br>        
         
