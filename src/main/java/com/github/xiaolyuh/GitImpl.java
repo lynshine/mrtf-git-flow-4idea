@@ -3,7 +3,6 @@ package com.github.xiaolyuh;
 import com.github.xiaolyuh.utils.CollectionUtils;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.utils.NotifyUtil;
-import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Key;
 import git4idea.commands.*;
@@ -13,6 +12,7 @@ import git4idea.repo.GitRepository;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -137,13 +137,27 @@ public class GitImpl implements Git {
         h.setUrls(remote.getUrls());
         h.addParameters("origin/" + remoteBranchName);
         h.addParameters("-s");
-        h.addParameters("--format=Author:%ae-Date:%ad-Message:%s");
-        h.addParameters("--date=format:%Y-%m-%d_%H:%M:%S");
+        h.addParameters("--format=Author:%ae-Message:%s");
 
         NotifyUtil.notifyGitCommand(repository.getProject(), h.printableCommandLine());
         return git.runCommand(h);
     }
 
+    @Override
+    public GitCommandResult getLastReleaseTime(@NotNull GitRepository repository) {
+        //git reflog show --date=iso <branch name>
+        GitRemote remote = getDefaultRemote(repository);
+        GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), getReadGitCommand("reflog"));
+        h.setSilent(false);
+        h.setStdoutSuppressed(false);
+        h.setUrls(remote.getUrls());
+        h.addParameters("show");
+        h.addParameters("--date=iso");
+        h.addParameters("origin/" + Constants.LOCK_BRANCH_NAME);
+
+        NotifyUtil.notifyGitCommand(repository.getProject(), h.printableCommandLine());
+        return git.runCommand(h);
+    }
 
     @Override
     public GitCommandResult createNewTag(@NotNull GitRepository repository, @Nullable String tagName, @Nullable String message) {
@@ -217,6 +231,16 @@ public class GitImpl implements Git {
             return null;
         }
         return remotes.iterator().next();
+    }
+
+    private GitCommand getReadGitCommand(String name) {
+        try {
+            Method m = GitCommand.class.getDeclaredMethod("read", String.class);
+            m.setAccessible(true);
+            return (GitCommand) m.invoke(null, name);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private class GitFetchPruneDetector extends GitLineHandlerAdapter {

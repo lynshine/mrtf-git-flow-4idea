@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.xiaolyuh'
-version '1.0.10'
+version '1.0.11'
 
 sourceCompatibility = 1.8
 
@@ -25,6 +25,9 @@ intellij {
 }
 patchPluginXml {
     changeNotes """
+        <em>1.0.11<em></br>
+        <em>1. 修正锁定时间不准确的问题<em></br>   
+        
         <em>1.0.10<em></br>
         <em>1. 修改重建测试分支bug<em></br>   
              

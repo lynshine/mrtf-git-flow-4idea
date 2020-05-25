@@ -114,6 +114,14 @@ public interface Git {
     GitCommandResult showRemoteLastCommit(@NotNull GitRepository repository, @Nullable String remoteBranchName);
 
     /**
+     * 获取最后的发布时间
+     *
+     * @param repository
+     * @return
+     */
+    GitCommandResult getLastReleaseTime(@NotNull GitRepository repository);
+
+    /**
      * 创建tag
      *
      * @param repository gitRepository

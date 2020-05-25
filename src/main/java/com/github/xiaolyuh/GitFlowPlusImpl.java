@@ -78,10 +78,17 @@ public class GitFlowPlusImpl implements GitFlowPlus {
     public String getRemoteLastCommit(@NotNull GitRepository repository, @Nullable String remoteBranchName) {
         git.fetch(repository);
         GitCommandResult result = git.showRemoteLastCommit(repository, remoteBranchName);
+        GitCommandResult lastReleaseTimeResult = git.getLastReleaseTime(repository);
         String msg = result.getOutputAsJoinedString();
         msg = msg.replaceFirst("Author:", "\r\n  Author: ");
-        msg = msg.replaceFirst("-Date:", ";\r\n  Date: ");
         msg = msg.replaceFirst("-Message:", ";\r\n  Message: ");
+
+        String lastReleaseTime = lastReleaseTimeResult.getOutputAsJoinedString();
+        if (StringUtils.isNotBlank(lastReleaseTime)) {
+            lastReleaseTime = lastReleaseTime.substring(lastReleaseTime.indexOf("@{") + 2, lastReleaseTime.indexOf(" +"));
+            msg = msg + "\r\n  Date: " + lastReleaseTime;
+        }
+
         return msg;
     }
 
