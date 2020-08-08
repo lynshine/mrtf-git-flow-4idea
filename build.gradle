@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.xiaolyuh'
-version '1.0.11'
+version '1.0.12'
 
 sourceCompatibility = 1.8
 
@@ -19,12 +19,15 @@ dependencies {
 }
 
 intellij {
-    version '2020.1'
+    version '2020.2'
     plugins 'git4idea', 'tasks'
     intellij.updateSinceUntilBuild false
 }
 patchPluginXml {
     changeNotes """
+        <em>1.0.12<em></br>
+        <em>1. 对2020.2的支持<em></br>   
+        
         <em>1.0.11<em></br>
         <em>1. 修正锁定时间不准确的问题<em></br>   
         
