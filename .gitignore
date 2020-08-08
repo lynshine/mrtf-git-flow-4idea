@@ -44,3 +44,6 @@ rebel.xml
 *.bak
 out/
 .gradle/
+gradlew
+gradlew.bat
+gradle-wrapper.properties
