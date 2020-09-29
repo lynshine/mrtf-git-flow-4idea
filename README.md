@@ -223,4 +223,11 @@ github 地址：https://github.com/wyh-chenfeng/layering-cache
 ![donate.png](https://github.com/xiaolyuh/mrtf-git-flow-4idea/blob/master/images/donate.png)
 
 
+# 技术支持
+添加微信记得备注 ```GitFlowPlus```
+
+![微信](https://github.com/xiaolyuh/layering-cache/blob/master/images/wechat.png)
+
+
+
 
