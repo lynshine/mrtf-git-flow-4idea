@@ -224,7 +224,7 @@ github 地址：https://github.com/wyh-chenfeng/layering-cache
 
 
 # 技术支持
-添加微信记得备注 ```GitFlowPlus```
+添加微信记得备注 ```GitFlowPlus```，捐赠用户可享有需求优先解决、协助部署、二次开发帮助。
 
 ![微信](https://github.com/xiaolyuh/layering-cache/blob/master/images/wechat.png)
 
