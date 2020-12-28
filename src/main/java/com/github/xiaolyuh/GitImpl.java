@@ -181,7 +181,7 @@ public class GitImpl implements Git {
 
         return ProgressManager.getInstance()
                 .runProcessWithProgressSynchronously(() -> git.runCommand(h),
-                        GitBundle.getString("tag.getting.existing.tags"),
+                        GitBundle.message("tag.getting.existing.tags"),
                         false,
                         repository.getProject());
     }

@@ -6,7 +6,10 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.util.ReflectionUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * 帮助
@@ -15,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class HelpAction extends AnAction {
     public HelpAction() {
-        super("帮助", "帮助", IconLoader.getIcon("/icons/help.svg"));
+        super("帮助", "帮助", IconLoader.getIcon("/icons/help.svg", Objects.requireNonNull(ReflectionUtil.getGrandCallerClass())));
     }
 
     @Override

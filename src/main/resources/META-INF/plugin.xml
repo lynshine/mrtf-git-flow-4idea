@@ -75,7 +75,8 @@
                     text="新建修复分支" description="新建修复分支，并推送到远程仓库"/>
             <separator/>
 
-            <group id="GitFlowPlus.RebuildBranch" popup="true" text="重建分支" class="com.github.xiaolyuh.action.RebuildActionGroup">
+            <group id="GitFlowPlus.RebuildBranch" popup="true" text="重建分支"
+                   class="com.github.xiaolyuh.action.RebuildActionGroup">
                 <action id="GitFlowPlus.RebuildTestAction" class="com.github.xiaolyuh.action.RebuildTestAction"
                         text="重建测试分支" description="重建测试分支，并推送到远程仓库，原来的分支将被删除" icon="/icons/test.svg"/>
                 <action id="GitFlowPlus.RebuildReleaseAction" class="com.github.xiaolyuh.action.RebuildReleaseAction"

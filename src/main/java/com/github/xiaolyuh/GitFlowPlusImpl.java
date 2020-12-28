@@ -231,7 +231,7 @@ public class GitFlowPlusImpl implements GitFlowPlus {
 
         GitCommandResult result = git.tagList(repository);
         if (!result.success()) {
-            GitUIUtil.showOperationError(repository.getProject(), GitBundle.getString("tag.getting.existing.tags"), result.getErrorOutputAsJoinedString());
+            GitUIUtil.showOperationError(repository.getProject(), GitBundle.message("tag.getting.existing.tags"), result.getErrorOutputAsJoinedString());
             throw new ProcessCanceledException();
         }
         for (StringScanner s = new StringScanner(result.getOutputAsJoinedString()); s.hasMoreData(); ) {

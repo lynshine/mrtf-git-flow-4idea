@@ -16,6 +16,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.util.ReflectionUtil;
 import git4idea.commands.GitCommandResult;
 import git4idea.repo.GitRepository;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,7 @@ public class InitPluginAction extends AnAction {
     private GitFlowPlus gitFlowPlus = GitFlowPlus.getInstance();
 
     public InitPluginAction() {
-        super("初始化配置", "初始化仓库配置，如果测试分支与发布分支不存在，将基于master新建", IconLoader.getIcon("/icons/config.svg"));
+        super("初始化配置", "初始化仓库配置，如果测试分支与发布分支不存在，将基于master新建", IconLoader.getIcon("/icons/config.svg", Objects.requireNonNull(ReflectionUtil.getGrandCallerClass())));
     }
 
     @Override

@@ -20,6 +20,7 @@ import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.util.ReflectionUtil;
 import git4idea.repo.GitRepository;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,6 +68,7 @@ public abstract class AbstractMergeAction extends AnAction {
 
     /**
      * 设置是否启用和Text
+     *
      * @param event
      */
     protected abstract void setEnabledAndText(AnActionEvent event);
@@ -101,7 +103,8 @@ public abstract class AbstractMergeAction extends AnAction {
         }
 
         int flag = Messages.showOkCancelDialog(project, getDialogContent(project),
-                getDialogTitle(project), I18n.getContent(I18nKey.OK_TEXT), I18n.getContent(I18nKey.CANCEL_TEXT), IconLoader.getIcon("/icons/warning.svg"));
+                getDialogTitle(project), I18n.getContent(I18nKey.OK_TEXT), I18n.getContent(I18nKey.CANCEL_TEXT),
+                IconLoader.getIcon("/icons/warning.svg", Objects.requireNonNull(ReflectionUtil.getGrandCallerClass())));
         if (flag == 0) {
             new Task.Backgroundable(project, getTaskTitle(project), false) {
                 @Override

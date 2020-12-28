@@ -8,6 +8,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.util.ReflectionUtil;
+
+import java.util.Objects;
 
 /**
  * 重建发布分支
@@ -17,7 +20,7 @@ import com.intellij.openapi.util.IconLoader;
 public class RebuildReleaseAction extends AbstractNewBranchAction {
     public RebuildReleaseAction() {
         super("重建发布分支", "重建发布分支，并推送到远程仓库，原来的分支将被删除",
-                IconLoader.getIcon("/icons/release.svg"));
+                IconLoader.getIcon("/icons/release.svg", Objects.requireNonNull(ReflectionUtil.getGrandCallerClass())));
     }
 
     @Override
@@ -39,7 +42,8 @@ public class RebuildReleaseAction extends AbstractNewBranchAction {
         int flag = Messages.showOkCancelDialog(project,
                 String.format(I18n.getContent(I18nKey.REBUILD_RELEASE_ACTION$DIALOG_MESSAGE), release, release),
                 I18n.getContent(I18nKey.REBUILD_RELEASE_ACTION$DIALOG_TITLE),
-                I18n.getContent(I18nKey.OK_TEXT), I18n.getContent(I18nKey.CANCEL_TEXT), IconLoader.getIcon("/icons/warning.svg"));
+                I18n.getContent(I18nKey.OK_TEXT), I18n.getContent(I18nKey.CANCEL_TEXT),
+                IconLoader.getIcon("/icons/warning.svg", Objects.requireNonNull(ReflectionUtil.getGrandCallerClass())));
 
         return flag == 0 ? release : StringUtils.EMPTY;
     }

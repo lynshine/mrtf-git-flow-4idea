@@ -8,9 +8,11 @@ import com.github.xiaolyuh.valve.merge.*;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.util.ReflectionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 发布完成
@@ -21,7 +23,7 @@ public class FinishReleaseAction extends AbstractMergeAction {
 
     public FinishReleaseAction() {
         super("发布完成", "解锁，并将发布分支合并到主干分支",
-                IconLoader.getIcon("/icons/finished.svg"));
+                IconLoader.getIcon("/icons/finished.svg", Objects.requireNonNull(ReflectionUtil.getGrandCallerClass())));
     }
 
     @Override
