@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.github.xiaolyuh.mrtf-git-flow-4idea</id>
     <name>GitFlowPlus</name>
-    <vendor email="xiaolyuh@163.com" url="https://github.com/xiaolyuh/mrtf-git-flow-4idea">yuhao wang</vendor>
+    <vendor email="xiaolyuh@163.com" url="https://github.com/xiaolyuh/mrtf-git-flow-4idea">汪雨浩</vendor>
 
     <description>
         <![CDATA[
