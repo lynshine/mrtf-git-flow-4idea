@@ -243,7 +243,7 @@ public class GitImpl implements Git {
         }
     }
 
-    private class GitFetchPruneDetector extends GitLineHandlerAdapter {
+    private class GitFetchPruneDetector implements GitLineHandlerListener {
 
         private final Pattern PRUNE_PATTERN = Pattern.compile("\\s*x\\s*\\[deleted\\].*->\\s*(\\S*)");
 

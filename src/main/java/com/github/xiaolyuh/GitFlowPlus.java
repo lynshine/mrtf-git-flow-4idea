@@ -2,14 +2,10 @@ package com.github.xiaolyuh;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vcs.changes.Change;
 import git4idea.commands.GitCommandResult;
-import git4idea.commands.GitLineHandlerListener;
 import git4idea.repo.GitRepository;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
 
 /**
  * @author yuhao.wang3

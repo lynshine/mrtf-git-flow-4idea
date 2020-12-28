@@ -1,11 +1,7 @@
 package com.github.xiaolyuh;
 
 import com.github.xiaolyuh.ui.GitFlowPlusWidget;
-import com.intellij.ide.AppLifecycleListener;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
-import com.intellij.openapi.application.ApplicationNamesInfo;
+import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
@@ -18,29 +14,20 @@ import git4idea.GitVcs;
 import git4idea.ui.branch.GitBranchWidget;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
-
 
 /**
  * Gitflow 组件
  *
  * @author yuhao.wang3
  */
-public class GitFlowPlusComponent implements ProjectComponent, VcsListener {
+public class GitFlowPlusComponent implements VcsListener, NamedComponent {
     Project project;
     GitFlowPlusWidget gitFlowPlusWidget;
     MessageBus messageBus;
 
     public GitFlowPlusComponent(Project project) {
         this.project = project;
-    }
 
-    @Override
-    public void initComponent() {
         messageBus = project.getMessageBus();
         messageBus.connect().subscribe(ProjectLevelVcsManager.VCS_CONFIGURATION_CHANGED, this);
     }

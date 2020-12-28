@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.xiaolyuh'
-version '1.0.12'
+version '1.0.13'
 
 sourceCompatibility = 1.8
 
@@ -25,6 +25,9 @@ intellij {
 }
 patchPluginXml {
     changeNotes """
+        <em>1.0.13<em></br>
+        <em>1. 对2020.3的支持<em></br>   
+
         <em>1.0.12<em></br>
         <em>1. 对2020.2的支持<em></br>   
         
