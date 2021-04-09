@@ -10,6 +10,7 @@ GitFlowPlus4Idea插件是一款基于[mrtf-git-flow](https://xiaolyuh.blog.csdn.
 - 基于```origin/master```新建开发分支和修复分支；
 - 基于```origin/master```重建测试分支和发布分支；
 - 开发完成后将开发分支合并到测试分支；
+- 支持在本地发起Merge Request；
 - 测试完成后将开发分支合并到发布分支，并锁定发布分支；
 - 发布完成后将发布分支合并到```origin/master```分支；
 - 发布失败将解除发布分支的锁定；
