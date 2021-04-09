@@ -79,6 +79,9 @@ public abstract class I18nKey {
     public static final String CANCEL_TEXT = "CancelText";
     public static final String MERGE_BRANCH_TASK_TITLE = "MergeBranchTaskTitle";
 
+    public static final String MERGE_REQUEST_DIALOG$TITLE = "MergeRequestDialog.Title";
+    public static final String MERGE_REQUEST_DIALOG$TITLE_REQUIRED = "MergeRequestDialog.TitleRequired";
+    public static final String MERGE_REQUEST_DIALOG$MESSAGE_REQUIRED = "MergeRequestDialog.MessageRequired";
 
     public static final String TAG_DIALOG$TITLE = "TagDialog.Title";
     public static final String TAG_DIALOG$TAG_NAME_REQUIRED = "TagDialog.TagNameRequired";

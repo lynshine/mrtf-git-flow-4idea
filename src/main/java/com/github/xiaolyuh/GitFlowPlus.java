@@ -151,4 +151,16 @@ public interface GitFlowPlus {
      * @return
      */
     boolean isExistTag(GitRepository repository, String tagName);
+
+    /**
+     * mergeRequest
+     *
+     * @param repository
+     * @param sourceBranch        源分支
+     * @param targetBranch        目标分支
+     * @param mergeRequestOptions merge request参数
+     * @return
+     */
+    GitCommandResult mergeRequest(GitRepository repository, String sourceBranch, String targetBranch, MergeRequestOptions mergeRequestOptions);
+
 }

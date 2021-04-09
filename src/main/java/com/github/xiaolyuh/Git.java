@@ -175,4 +175,14 @@ public interface Git {
      * @return
      */
     GitCommandResult getUserEmail(GitRepository repository);
+
+    /**
+     * merge request
+     * @param repository   gitRepository
+     * @param sourceBranch 需要merge的分支
+     * @param targetBranch 目标分支（合并到的分支）
+     * @param mergeRequestOptions merge request参数
+     * @return
+     */
+    GitCommandResult mergeRequest(GitRepository repository, String sourceBranch, String targetBranch, MergeRequestOptions mergeRequestOptions);
 }

@@ -5,7 +5,10 @@ import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.utils.NotifyUtil;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Key;
-import git4idea.commands.*;
+import git4idea.commands.GitCommand;
+import git4idea.commands.GitCommandResult;
+import git4idea.commands.GitLineHandler;
+import git4idea.commands.GitLineHandlerListener;
 import git4idea.i18n.GitBundle;
 import git4idea.repo.GitRemote;
 import git4idea.repo.GitRepository;
@@ -221,6 +224,23 @@ public class GitImpl implements Git {
         GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.CONFIG);
         h.setSilent(true);
         h.addParameters("--null", "--get", "user.email");
+        NotifyUtil.notifyGitCommand(repository.getProject(), h.printableCommandLine());
+        return git.runCommand(h);
+    }
+
+    @Override
+    public GitCommandResult mergeRequest(GitRepository repository, String sourceBranch, String targetBranch, MergeRequestOptions mergeRequestOptions) {
+        // git push -o merge_request.create -o merge_request.target=%s -o merge_request.title=%s -o merge_request.description=%s
+        GitRemote remote = getDefaultRemote(repository);
+        GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.PUSH);
+        h.setSilent(false);
+        h.setStdoutSuppressed(false);
+        h.setUrls(remote.getUrls());
+        h.addParameters("-o", "merge_request.create");
+        h.addParameters("-o", "merge_request.target=" + targetBranch);
+        h.addParameters("-o", String.format("merge_request.title=%s", mergeRequestOptions.getTitle()));
+        h.addParameters("-o", String.format("merge_request.description=%s", mergeRequestOptions.getMessage()));
+
         NotifyUtil.notifyGitCommand(repository.getProject(), h.printableCommandLine());
         return git.runCommand(h);
     }

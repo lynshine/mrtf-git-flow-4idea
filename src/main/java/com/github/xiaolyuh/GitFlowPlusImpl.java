@@ -245,6 +245,10 @@ public class GitFlowPlusImpl implements GitFlowPlus {
         return myExistingTags.contains(tagName);
     }
 
+    @Override
+    public GitCommandResult mergeRequest(GitRepository repository, String sourceBranch, String targetBranch, MergeRequestOptions mergeRequestOptions) {
+        return git.mergeRequest(repository, sourceBranch, targetBranch, mergeRequestOptions);
+    }
 
     private GitCommandResult checkTargetBranchIsExist(GitRepository repository, String
             targetBranch) {
