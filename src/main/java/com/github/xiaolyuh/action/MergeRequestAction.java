@@ -8,7 +8,7 @@ import com.github.xiaolyuh.utils.CollectionUtils;
 import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.utils.GitBranchUtil;
 import com.github.xiaolyuh.utils.NotifyUtil;
-import com.intellij.openapi.actionSystem.AnAction;
+import com.github.xiaolyuh.valve.merge.Valve;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
@@ -20,6 +20,7 @@ import git4idea.commands.GitCommandResult;
 import git4idea.repo.GitRepository;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -27,7 +28,7 @@ import java.util.Objects;
  *
  * @author yuhao.wang3
  */
-public class MergeRequestAction extends AnAction {
+public class MergeRequestAction extends AbstractMergeAction {
     protected GitFlowPlus gitFlowPlus = GitFlowPlus.getInstance();
 
     public MergeRequestAction() {
@@ -35,7 +36,7 @@ public class MergeRequestAction extends AnAction {
     }
 
     @Override
-    public void update(AnActionEvent event) {
+    protected void setEnabledAndText(AnActionEvent event) {
         event.getPresentation().setText(I18n.getContent(I18nKey.MERGE_REQUEST_ACTION$TEXT));
     }
 
@@ -79,6 +80,26 @@ public class MergeRequestAction extends AnAction {
                 VirtualFileManager.getInstance().asyncRefresh(null);
             }
         }.queue();
+    }
+
+    @Override
+    protected String getTargetBranch(Project project) {
+        return null;
+    }
+
+    @Override
+    protected String getDialogTitle(Project project) {
+        return null;
+    }
+
+    @Override
+    protected String getTaskTitle(Project project) {
+        return null;
+    }
+
+    @Override
+    protected List<Valve> getValves() {
+        return null;
     }
 
 
