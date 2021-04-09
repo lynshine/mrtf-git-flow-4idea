@@ -23,11 +23,14 @@ public class MergeRequestDialog extends DialogWrapper {
 
     private Project project;
 
-    public MergeRequestDialog(@Nullable Project project) {
+    public MergeRequestDialog(@Nullable Project project,String title, String message) {
         super(project);
         this.project = project;
         setTitle(I18n.getContent(I18nKey.MERGE_REQUEST_DIALOG$TITLE));
         init();
+
+        titleTextField.setText(title);
+        messageTextArea.setText(message);
     }
 
     public MergeRequestOptions getMergeRequestOptions() {

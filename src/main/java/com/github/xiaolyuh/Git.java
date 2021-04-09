@@ -114,6 +114,15 @@ public interface Git {
     GitCommandResult showRemoteLastCommit(@NotNull GitRepository repository, @Nullable String remoteBranchName);
 
     /**
+     * 查看本地分支最后一次提交信息
+     *
+     * @param repository       gitRepository
+     * @param branchName 分支名称
+     * @return
+     */
+    GitCommandResult showLocalLastCommit(@NotNull GitRepository repository, @Nullable String branchName);
+
+    /**
      * 获取最后的发布时间
      *
      * @param repository

@@ -147,6 +147,22 @@ public class GitImpl implements Git {
     }
 
     @Override
+    public GitCommandResult showLocalLastCommit(@NotNull GitRepository repository, @Nullable String localBranchName) {
+        //git show master  -s --format=%s-body:%b
+        GitRemote remote = getDefaultRemote(repository);
+        GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.SHOW);
+        h.setSilent(false);
+        h.setStdoutSuppressed(false);
+        h.setUrls(remote.getUrls());
+        h.addParameters(localBranchName);
+        h.addParameters("-s");
+        h.addParameters("--format=%s-body:%b");
+
+        NotifyUtil.notifyGitCommand(repository.getProject(), h.printableCommandLine());
+        return git.runCommand(h);
+    }
+
+    @Override
     public GitCommandResult getLastReleaseTime(@NotNull GitRepository repository) {
         //git reflog show --date=iso <branch name>
         GitRemote remote = getDefaultRemote(repository);

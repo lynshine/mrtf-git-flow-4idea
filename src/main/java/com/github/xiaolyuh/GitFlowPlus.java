@@ -74,6 +74,15 @@ public interface GitFlowPlus {
                                @Nullable String branch);
 
     /**
+     * 查看本地分支最后一次提交信息
+     *
+     * @param repository gitRepository
+     * @param branchName 分支名称
+     * @return
+     */
+    GitCommandResult getLocalLastCommit(@NotNull GitRepository repository, @Nullable String branchName);
+
+    /**
      * 合并分支
      *
      * @param repository    repository

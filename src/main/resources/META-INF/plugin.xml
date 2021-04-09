@@ -91,15 +91,15 @@
                     text="解决冲突" description="解决冲突"/>
             <separator/>
 
-            <!--提测-->
-            <action id="GitFlowPlus.StartTestAction" class="com.github.xiaolyuh.action.StartTestAction"
-                    text="提测" description="将当前开发分支合并到test分支" icon="/icons/mergeToTest.svg">
-            </action>
-            <separator/>
-
             <!--merge request-->
             <action id="GitFlowPlus.MergeRequestAction" class="com.github.xiaolyuh.action.MergeRequestAction"
                     text="Merge Request" description="发起 code review" icon="/icons/mergeToTest.svg">
+            </action>
+            <separator/>
+
+            <!--提测-->
+            <action id="GitFlowPlus.StartTestAction" class="com.github.xiaolyuh.action.StartTestAction"
+                    text="提测" description="将当前开发分支合并到test分支" icon="/icons/mergeToTest.svg">
             </action>
             <separator/>
 

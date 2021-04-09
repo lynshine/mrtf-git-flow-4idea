@@ -9,6 +9,7 @@ import com.github.xiaolyuh.utils.ConfigUtil;
 import com.github.xiaolyuh.utils.GitBranchUtil;
 import com.github.xiaolyuh.utils.NotifyUtil;
 import com.github.xiaolyuh.valve.merge.Valve;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
@@ -43,20 +44,21 @@ public class MergeRequestAction extends AbstractMergeAction {
     @Override
     public void actionPerformed(AnActionEvent event) {
         Project project = event.getProject();
+        final String currentBranch = gitFlowPlus.getCurrentBranch(project);
+        final String targetBranch = ConfigUtil.getConfig(project).get().getTestBranch();
+        final GitRepository repository = GitBranchUtil.getCurrentRepository(project);
+        if (Objects.isNull(repository)) {
+            return;
+        }
 
-        MergeRequestDialog mergeRequestDialog = new MergeRequestDialog(project);
+        GitCommandResult result = gitFlowPlus.getLocalLastCommit(repository, currentBranch);
+        String[] msgs = result.getOutputAsJoinedString().split("-body:");
+        MergeRequestDialog mergeRequestDialog = new MergeRequestDialog(project, msgs[0], msgs[1]);
         mergeRequestDialog.show();
         if (!mergeRequestDialog.isOK()) {
             return;
         }
 
-        final String currentBranch = gitFlowPlus.getCurrentBranch(project);
-        final String targetBranch = ConfigUtil.getConfig(project).get().getTestBranch();
-
-        final GitRepository repository = GitBranchUtil.getCurrentRepository(project);
-        if (Objects.isNull(repository)) {
-            return;
-        }
 
         new Task.Backgroundable(project, "Merge Request", false) {
             @Override
@@ -71,7 +73,7 @@ public class MergeRequestAction extends AbstractMergeAction {
                 if (CollectionUtils.isNotEmpty(result.getErrorOutput()) && result.getErrorOutput().size() > 3) {
                     String address = result.getErrorOutput().get(2);
                     address = address.split("   ")[1];
-                    NotifyUtil.notifySuccess(project, "Success", String.format("<a href=\"%s\">%s</a>", address, address));
+                    BrowserUtil.browse(address);
                 }
 
                 // 刷新

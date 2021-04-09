@@ -92,6 +92,12 @@ public class GitFlowPlusImpl implements GitFlowPlus {
         return msg;
     }
 
+   @Override
+    public GitCommandResult getLocalLastCommit(@NotNull GitRepository repository, @Nullable String branchName) {
+        git.fetch(repository);
+        return git.showLocalLastCommit(repository, branchName);
+    }
+
     @Override
     public GitCommandResult mergeBranchAndPush(GitRepository repository, String currentBranch, String targetBranch,
                                                TagOptions tagOptions) {
