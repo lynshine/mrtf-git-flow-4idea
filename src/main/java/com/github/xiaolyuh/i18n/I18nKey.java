@@ -64,6 +64,10 @@ public abstract class I18nKey {
     public static final String START_RELEASE_ACTION$TEXT = "StartReleaseAction.text";
     public static final String START_RELEASE_ACTION$DIALOG_TITLE = "StartReleaseAction.DialogTitle";
 
+    public static final String MERGE_REQUEST_ACTION$TEXT = "MergeRequestAction.text";
+    public static final String MERGE_REQUEST_ACTION$DIALOG_TITLE = "MergeRequestAction.DialogTitle";
+
+
     public static final String START_TEST_ACTION$TEXT = "StartTestAction.text";
     public static final String START_TEST_ACTION$DIALOG_TITLE = "StartTestAction.DialogTitle";
 

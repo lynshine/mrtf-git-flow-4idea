@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  * @author yuhao.wang3
  * @since 2020/3/27 12:15
  */
-public class TagDialog extends DialogWrapper {
+public class MergeRequestDialog extends DialogWrapper {
     private JPanel tagPanel;
 
     private JTextField titleTextField;
@@ -27,7 +27,7 @@ public class TagDialog extends DialogWrapper {
 
     private Project project;
 
-    public TagDialog(@Nullable Project project) {
+    public MergeRequestDialog(@Nullable Project project) {
         super(project);
         this.project = project;
         setTitle(I18n.getContent(I18nKey.TAG_DIALOG$TITLE));

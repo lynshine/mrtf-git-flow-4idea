@@ -98,6 +98,10 @@ public class GitFlowPlusWidget extends EditorBasedWidget implements StatusBarWid
         popupGroup.add(conflictsAction);
         popupGroup.add(new Separator());
 
+        MergeRequestAction mergeRequestAction = new MergeRequestAction();
+        popupGroup.add(mergeRequestAction);
+        popupGroup.add(new Separator());
+
         StartTestAction action = new StartTestAction();
         action.registerCustomShortcutSet(new CustomShortcutSet(KeyStroke.getKeyStroke("ctrl shift T")), myComponent);
         popupGroup.add(action);
