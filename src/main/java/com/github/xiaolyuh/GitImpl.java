@@ -246,7 +246,7 @@ public class GitImpl implements Git {
 
     @Override
     public GitCommandResult mergeRequest(GitRepository repository, String sourceBranch, String targetBranch, MergeRequestOptions mergeRequestOptions) {
-        // git push -o merge_request.create -o merge_request.target=%s -o merge_request.title=%s -o merge_request.description=%s
+        // git push -o merge_request.create -o merge_request.target=%s -o merge_request.title=%s -o merge_request.description=%s -o merge_request.label="label1"
         GitRemote remote = getDefaultRemote(repository);
         GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.PUSH);
         h.setSilent(false);
@@ -254,6 +254,7 @@ public class GitImpl implements Git {
         h.setUrls(remote.getUrls());
         h.addParameters("-o", "merge_request.create");
         h.addParameters("-o", "merge_request.target=" + targetBranch);
+        h.addParameters("-o", String.format("merge_request.label=%s", mergeRequestOptions.getTitle().split("\\(")[0]));
         h.addParameters("-o", String.format("merge_request.title=%s", mergeRequestOptions.getTitle()));
         h.addParameters("-o", String.format("merge_request.description=%s", mergeRequestOptions.getMessage()));
 

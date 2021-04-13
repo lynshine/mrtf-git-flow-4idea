@@ -18,6 +18,7 @@
       6. Failure to release will unlock the release branch; <br>
       7. Only those who lock the release branch can click [release complete] and [release failed]; <br>
       8. All executed git commands can be viewed in "Event Log"; <br>
+      9. Support to initiate Merge Request locally; <br>
 
         <br>
     这是一个适用于<a href="https://xiaolyuh.blog.csdn.net/article/details/105180250">mrtf git flow</a> (master,release,test,feature) 流程的分支管理插件 <a href="https://xiaolyuh.blog.csdn.net/article/details/105150446">使用指南</a>。<br>

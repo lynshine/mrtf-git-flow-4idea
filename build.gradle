@@ -25,6 +25,9 @@ intellij {
 }
 patchPluginXml {
     changeNotes """
+        <em>1.1.1<em></br>
+        <em>1. 新增merge requet 标签功能 <em></br>   
+        
         <em>1.1.0<em></br>
         <em>1. 对2021.1的支持<em></br>   
         <em>2. 支持在本地发起Merge Request<em></br>   
