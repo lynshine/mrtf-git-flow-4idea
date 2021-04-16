@@ -54,6 +54,15 @@ public interface Git {
     GitCommandResult fetchNewBranchByRemoteMaster(GitRepository repository, String master, String newBranchName);
 
     /**
+     * 已本地分支拉取一个新分支
+     *
+     * @param repository    repository
+     * @param newBranchName 新建分支
+     * @return GitCommandResult
+     */
+    GitCommandResult branch(@NotNull GitRepository repository, @NotNull String newBranchName);
+
+    /**
      * 重建
      *
      * @param repository    gitRepository
@@ -116,7 +125,7 @@ public interface Git {
     /**
      * 查看本地分支最后一次提交信息
      *
-     * @param repository       gitRepository
+     * @param repository gitRepository
      * @param branchName 分支名称
      * @return
      */
@@ -187,9 +196,10 @@ public interface Git {
 
     /**
      * merge request
-     * @param repository   gitRepository
-     * @param sourceBranch 需要merge的分支
-     * @param targetBranch 目标分支（合并到的分支）
+     *
+     * @param repository          gitRepository
+     * @param sourceBranch        需要merge的分支
+     * @param targetBranch        目标分支（合并到的分支）
      * @param mergeRequestOptions merge request参数
      * @return
      */

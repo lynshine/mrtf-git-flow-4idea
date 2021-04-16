@@ -68,6 +68,20 @@ public class GitImpl implements Git {
         return git.runCommand(h);
     }
 
+    @Override
+    public GitCommandResult branch(@NotNull GitRepository repository, @NotNull String newBranchName) {
+        //git branch 本地分支名x
+        GitRemote remote = getDefaultRemote(repository);
+        GitLineHandler h = new GitLineHandler(repository.getProject(), repository.getRoot(), GitCommand.BRANCH);
+        h.setSilent(false);
+        h.setStdoutSuppressed(false);
+        h.setUrls(remote.getUrls());
+        // 远程分支名x:本地分支名x
+        h.addParameters(newBranchName);
+
+        NotifyUtil.notifyGitCommand(repository.getProject(), h.printableCommandLine());
+        return git.runCommand(h);
+    }
 
     @Override
     public GitCommandResult renameBranch(@NotNull GitRepository repository,
@@ -252,8 +266,13 @@ public class GitImpl implements Git {
         h.setSilent(false);
         h.setStdoutSuppressed(false);
         h.setUrls(remote.getUrls());
+        h.addParameters("origin");
+        h.addParameters(sourceBranch + ":" + sourceBranch);
+        h.addParameters("--set-upstream");
+
         h.addParameters("-o", "merge_request.create");
         h.addParameters("-o", "merge_request.target=" + targetBranch);
+        h.addParameters("-o", "merge_request.remove_source_branch");
         h.addParameters("-o", String.format("merge_request.label=%s", mergeRequestOptions.getTitle().split("\\(")[0]));
         h.addParameters("-o", String.format("merge_request.title=%s", mergeRequestOptions.getTitle()));
         h.addParameters("-o", String.format("merge_request.description=%s", mergeRequestOptions.getMessage()));

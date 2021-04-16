@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.xiaolyuh'
-version '1.1.1'
+version '1.1.2'
 
 sourceCompatibility = 1.8
 
@@ -25,6 +25,9 @@ intellij {
 }
 patchPluginXml {
     changeNotes """
+        <em>1.1.21<em></br
+        <em>1. 修复gitlib 解决冲突分支相互合并的问题 <em></br>   
+        
         <em>1.1.1<em></br>
         <em>1. 新增merge requet 标签功能 <em></br>   
         

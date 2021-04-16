@@ -59,12 +59,29 @@ public class GitFlowPlusImpl implements GitFlowPlus {
     }
 
     @Override
+    public GitCommandResult newNewBranchByLocalBranch(@NotNull GitRepository repository, @Nullable String localBranchName, @NotNull String newBranchName) {
+        git.checkout(repository, localBranchName);
+        git.branch(repository, newBranchName);
+        return git.checkout(repository, newBranchName);
+    }
+
+    @Override
     public GitCommandResult deleteBranch(@NotNull GitRepository repository,
-                                         @Nullable String master,
+                                         @Nullable String checkoutBranchName,
                                          @Nullable String branchName) {
 
-        git.checkout(repository, master);
+        git.checkout(repository, checkoutBranchName);
         git.deleteRemoteBranch(repository, branchName);
+        return git.deleteLocalBranch(repository, branchName);
+    }
+
+
+    @Override
+    public GitCommandResult deleteLocalBranch(@NotNull GitRepository repository,
+                                              @Nullable String checkoutBranchName,
+                                              @Nullable String branchName) {
+
+        git.checkout(repository, checkoutBranchName);
         return git.deleteLocalBranch(repository, branchName);
     }
 
@@ -92,7 +109,7 @@ public class GitFlowPlusImpl implements GitFlowPlus {
         return msg;
     }
 
-   @Override
+    @Override
     public GitCommandResult getLocalLastCommit(@NotNull GitRepository repository, @Nullable String branchName) {
         git.fetch(repository);
         return git.showLocalLastCommit(repository, branchName);

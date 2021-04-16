@@ -42,18 +42,41 @@ public interface GitFlowPlus {
                                                   @Nullable String master,
                                                   @NotNull String newBranchName);
 
+    /**
+     * 已本地分支拉取一个新分支
+     *
+     * @param repository      repository
+     * @param localBranchName 本地分支名称
+     * @param newBranchName   新建分支
+     * @return GitCommandResult
+     */
+    GitCommandResult newNewBranchByLocalBranch(@NotNull GitRepository repository,
+                                               @Nullable String localBranchName,
+                                               @NotNull String newBranchName);
 
     /**
      * 删除分支
      *
-     * @param repository repository
-     * @param master     主干分支名称
-     * @param branchName 需要删除的分支
+     * @param repository         repository
+     * @param checkoutBranchName 切换到分支名称
+     * @param branchName         需要删除的分支
      * @return GitCommandResult
      */
     GitCommandResult deleteBranch(@NotNull GitRepository repository,
-                                  @Nullable String master,
+                                  @Nullable String checkoutBranchName,
                                   @Nullable String branchName);
+
+    /**
+     * 删除本地分支
+     *
+     * @param repository         repository
+     * @param checkoutBranchName 切换到分支名称
+     * @param branchName         需要删除的分支
+     * @return GitCommandResult
+     */
+    GitCommandResult deleteLocalBranch(@NotNull GitRepository repository,
+                                       @Nullable String checkoutBranchName,
+                                       @Nullable String branchName);
 
     /**
      * 获取当前分支名称

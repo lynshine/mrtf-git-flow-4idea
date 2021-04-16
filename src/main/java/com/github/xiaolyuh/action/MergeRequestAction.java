@@ -65,7 +65,17 @@ public class MergeRequestAction extends AbstractMergeAction {
             public void run(@NotNull ProgressIndicator indicator) {
                 NotifyUtil.notifyGitCommand(event.getProject(), "===================================================================================");
 
-                GitCommandResult result = gitFlowPlus.mergeRequest(repository, currentBranch, targetBranch, mergeRequestDialog.getMergeRequestOptions());
+                String tempBranchName = currentBranch + "_temp";
+                // 删除分支
+                GitCommandResult result = gitFlowPlus.deleteBranch(repository, currentBranch, tempBranchName);
+                // 新建分支
+                result = gitFlowPlus.newNewBranchByLocalBranch(repository, currentBranch, tempBranchName);
+                if (!result.success()) {
+                    NotifyUtil.notifyError(project, "Error", result.getErrorOutputAsJoinedString());
+                    return;
+                }
+                // 发起merge request
+                result = gitFlowPlus.mergeRequest(repository, tempBranchName, targetBranch, mergeRequestDialog.getMergeRequestOptions());
                 if (!result.success()) {
                     NotifyUtil.notifyError(project, "Error", result.getErrorOutputAsJoinedString());
                 }
@@ -75,7 +85,11 @@ public class MergeRequestAction extends AbstractMergeAction {
                     address = address.split("   ")[1];
                     BrowserUtil.browse(address);
                 }
-
+                // 删除本地临时分支
+                result = gitFlowPlus.deleteLocalBranch(repository, currentBranch, tempBranchName);
+                if (!result.success()) {
+                    NotifyUtil.notifyError(project, "Error", result.getErrorOutputAsJoinedString());
+                }
                 // 刷新
                 repository.update();
                 myProject.getMessageBus().syncPublisher(GitRepository.GIT_REPO_CHANGE).repositoryChanged(repository);
