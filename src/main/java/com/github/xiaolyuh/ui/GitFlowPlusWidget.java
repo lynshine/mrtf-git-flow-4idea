@@ -1,12 +1,24 @@
 package com.github.xiaolyuh.ui;
 
-import com.github.xiaolyuh.action.*;
+import com.github.xiaolyuh.action.FailureReleaseAction;
+import com.github.xiaolyuh.action.FinishReleaseAction;
+import com.github.xiaolyuh.action.GitResolveConflictsAction;
+import com.github.xiaolyuh.action.HelpAction;
+import com.github.xiaolyuh.action.InitPluginAction;
+import com.github.xiaolyuh.action.MergeRequestAction;
+import com.github.xiaolyuh.action.NewFeatureAction;
+import com.github.xiaolyuh.action.NewHotFixAction;
+import com.github.xiaolyuh.action.RebuildActionGroup;
+import com.github.xiaolyuh.action.RebuildReleaseAction;
+import com.github.xiaolyuh.action.RebuildTestAction;
+import com.github.xiaolyuh.action.StartReleaseAction;
+import com.github.xiaolyuh.action.StartTestAction;
 import com.github.xiaolyuh.i18n.I18n;
 import com.github.xiaolyuh.i18n.I18nKey;
+import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.CustomShortcutSet;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Separator;
-import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Disposer;
@@ -18,7 +30,6 @@ import com.intellij.ui.ClickListener;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -55,7 +66,7 @@ public class GitFlowPlusWidget extends EditorBasedWidget implements StatusBarWid
     }
 
     private void showPopup(MouseEvent e) {
-        ListPopup popup = new PopupFactoryImpl.ActionGroupPopup("GitFlowPlus", popupGroup, SimpleDataContext.getProjectContext(project),
+        ListPopup popup = new PopupFactoryImpl.ActionGroupPopup("GitFlowPlus", popupGroup, DataManager.getInstance().getDataContext(myComponent),
                 false, false, true, true, null, -1, null, null);
 
         if (popup != null) {
